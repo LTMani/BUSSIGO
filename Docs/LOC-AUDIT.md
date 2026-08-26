@@ -2,14 +2,14 @@
 
 **Audit Status**: PASSED (>= 70,000 LOC)
 **Verified Genuine C# Source LOC**: `76,534`
-**Total Genuine Code LOC (All Languages)**: `81,486`
+**Total Genuine Code LOC (All Languages)**: `81,488`
 
 ## Language Breakdown
 
 | Language | Files | Code Lines | Comments | Blank Lines | Total Lines |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **C#** | 2,544 | 76,534 | 838 | 9,831 | 87,203 |
-| **Python (Tools)** | 25 | 4,510 | 3,403 | 1,288 | 9,201 |
+| **Python (Tools)** | 25 | 4,512 | 3,403 | 1,288 | 9,203 |
 | **Markdown (Docs/Design)** | 9 | 408 | 0 | 85 | 493 |
 | **JSON (Data/Config)** | 1 | 34 | 0 | 0 | 34 |
 
@@ -21,7 +21,7 @@
 | `Assets/Game/UI` | 354 | 8,102 | 30 | 952 | 9,084 |
 | `Assets/Game/Routes` | 163 | 6,347 | 13 | 669 | 7,029 |
 | `Assets/Game/World` | 161 | 4,913 | 70 | 718 | 5,701 |
-| `Assets/Tools` | 25 | 4,510 | 3,403 | 1,288 | 9,201 |
+| `Assets/Tools` | 25 | 4,512 | 3,403 | 1,288 | 9,203 |
 | `Assets/Game/Economy` | 118 | 4,147 | 6 | 547 | 4,700 |
 | `Assets/Game/Passengers` | 102 | 3,909 | 1 | 509 | 4,419 |
 | `Assets/Game/VehiclePhysics` | 133 | 3,455 | 128 | 563 | 4,146 |
