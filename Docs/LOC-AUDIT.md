@@ -1,17 +1,17 @@
 # BUSSIGO - Verified Source Code & LOC Audit Report
 
 **Audit Status**: PASSED (>= 70,000 LOC)
-**Verified Genuine C# Source LOC**: `76,534`
-**Total Genuine Code LOC (All Languages)**: `81,488`
+**Verified Genuine C# Source LOC**: `76,990`
+**Total Genuine Code LOC (All Languages)**: `82,094`
 
 ## Language Breakdown
 
 | Language | Files | Code Lines | Comments | Blank Lines | Total Lines |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **C#** | 2,544 | 76,534 | 838 | 9,831 | 87,203 |
-| **Python (Tools)** | 25 | 4,512 | 3,403 | 1,288 | 9,203 |
-| **Markdown (Docs/Design)** | 9 | 408 | 0 | 85 | 493 |
-| **JSON (Data/Config)** | 1 | 34 | 0 | 0 | 34 |
+| **C#** | 2,554 | 76,990 | 845 | 9,894 | 87,729 |
+| **Python (Tools)** | 27 | 4,536 | 3,413 | 1,297 | 9,246 |
+| **Markdown (Docs/Design)** | 9 | 478 | 0 | 115 | 593 |
+| **JSON (Data/Config)** | 3 | 90 | 0 | 0 | 90 |
 
 ## Module & Subsystem Breakdown
 
@@ -47,9 +47,18 @@
 | `Assets/Game/Input` | 21 | 477 | 0 | 86 | 563 |
 | `Assets/Game/Localization` | 22 | 448 | 1 | 49 | 498 |
 | `Docs` | 8 | 326 | 0 | 68 | 394 |
+| `Root` | 5 | 232 | 10 | 56 | 298 |
 | `Assets/Editor` | 2 | 129 | 2 | 19 | 150 |
-| `Root` | 1 | 82 | 0 | 17 | 99 |
+| `Assets/Bussigo/Vehicle` | 1 | 81 | 3 | 15 | 99 |
+| `Assets/Bussigo/Route` | 2 | 72 | 0 | 8 | 80 |
+| `Assets/Bussigo/Core` | 1 | 71 | 0 | 10 | 81 |
+| `Assets/Bussigo/Passengers` | 1 | 67 | 2 | 5 | 74 |
+| `Assets/Bussigo/Audio` | 1 | 46 | 2 | 6 | 54 |
 | `Packages` | 1 | 34 | 0 | 0 | 34 |
+| `Assets/Bussigo/Economy` | 1 | 32 | 0 | 3 | 35 |
+| `Assets/Bussigo/UI` | 1 | 32 | 0 | 7 | 39 |
+| `Assets/Bussigo/World` | 1 | 32 | 0 | 3 | 35 |
+| `Assets/Bussigo/Input` | 1 | 23 | 0 | 6 | 29 |
 
 ## Audit Exclusions Verified
 - Unity `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `obj/`, `bin/` excluded.
