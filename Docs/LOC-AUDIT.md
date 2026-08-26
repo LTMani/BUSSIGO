@@ -1,16 +1,17 @@
 # BUSSIGO - Verified Source Code & LOC Audit Report
 
 **Audit Status**: PASSED (>= 70,000 LOC)
-**Verified Genuine C# Source LOC**: `74,137`
-**Total Genuine Code LOC (All Languages)**: `78,410`
+**Verified Genuine C# Source LOC**: `75,824`
+**Total Genuine Code LOC (All Languages)**: `80,253`
 
 ## Language Breakdown
 
 | Language | Files | Code Lines | Comments | Blank Lines | Total Lines |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **C#** | 2,520 | 74,137 | 698 | 9,396 | 84,231 |
-| **Python (Tools)** | 18 | 4,016 | 3,365 | 1,196 | 8,577 |
+| **C#** | 2,538 | 75,824 | 800 | 9,706 | 86,330 |
+| **Python (Tools)** | 19 | 4,138 | 3,370 | 1,219 | 8,727 |
 | **Markdown (Docs/Design)** | 7 | 257 | 0 | 50 | 307 |
+| **JSON (Data/Config)** | 1 | 34 | 0 | 0 | 34 |
 
 ## Module & Subsystem Breakdown
 
@@ -21,7 +22,7 @@
 | `Assets/Game/Routes` | 163 | 6,347 | 13 | 669 | 7,029 |
 | `Assets/Game/World` | 161 | 4,913 | 70 | 718 | 5,701 |
 | `Assets/Game/Economy` | 118 | 4,147 | 6 | 547 | 4,700 |
-| `Assets/Tools` | 18 | 4,016 | 3,365 | 1,196 | 8,577 |
+| `Assets/Tools` | 19 | 4,138 | 3,370 | 1,219 | 8,727 |
 | `Assets/Game/Passengers` | 102 | 3,909 | 1 | 509 | 4,419 |
 | `Assets/Game/VehiclePhysics` | 133 | 3,455 | 128 | 563 | 4,146 |
 | `Assets/Game/Vehicles` | 119 | 3,327 | 209 | 614 | 4,150 |
@@ -32,6 +33,7 @@
 | `Assets/Game/Missions` | 111 | 2,224 | 0 | 236 | 2,460 |
 | `Assets/Game/Audio` | 91 | 1,909 | 34 | 285 | 2,228 |
 | `Assets/Game/Progression` | 101 | 1,803 | 0 | 214 | 2,017 |
+| `Assets/Game/Runtime3D` | 18 | 1,687 | 102 | 310 | 2,099 |
 | `Assets/Game/Weather` | 51 | 1,599 | 60 | 363 | 2,022 |
 | `Assets/Game/Core` | 16 | 1,104 | 5 | 176 | 1,285 |
 | `Assets/Game/Garage` | 31 | 1,069 | 2 | 157 | 1,228 |
@@ -46,6 +48,7 @@
 | `Assets/Game/Localization` | 22 | 448 | 1 | 49 | 498 |
 | `Docs` | 6 | 175 | 0 | 33 | 208 |
 | `Root` | 1 | 82 | 0 | 17 | 99 |
+| `Packages` | 1 | 34 | 0 | 0 | 34 |
 
 ## Audit Exclusions Verified
 - Unity `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `obj/`, `bin/` excluded.

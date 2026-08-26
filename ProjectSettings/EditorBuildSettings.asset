@@ -1,0 +1,13 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - m_Path: Assets/Scenes/MainMenu.unity
+    m_Guid: 01020304050607080910111213141516
+    m_Enabled: 1
+  - m_Path: Assets/Scenes/VijayawadaHyderabadPlayableRoute.unity
+    m_Guid: 16151413121110090807060504030201
+    m_Enabled: 1
