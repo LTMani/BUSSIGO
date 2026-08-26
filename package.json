@@ -1,0 +1,31 @@
+{
+  "name": "bussigo",
+  "version": "2.0.0",
+  "description": "BUSSIGO: South India Bus & Travel Empire Simulator",
+  "main": "main.py",
+  "scripts": {
+    "start": "python Assets/Tools/serve_webgl.py 8080",
+    "serve": "python Assets/Tools/serve_webgl.py 8080",
+    "build": "python Assets/Tools/build_webgl_local.py",
+    "test": "python Assets/Tools/test_runner.py",
+    "audit": "python Assets/Tools/loc_audit.py",
+    "verify": "python Assets/Tools/verify_environment.py"
+  },
+  "keywords": [
+    "bus-simulator",
+    "south-india",
+    "unity3d",
+    "webgl",
+    "threejs",
+    "simulation"
+  ],
+  "author": "BUSSIGO Studios",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0"
+  }
+}

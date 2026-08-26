@@ -53,6 +53,7 @@ Thumbs.db
 
 # Secrets and Local Configurations (NEVER COMMIT REAL SECRETS)
 .env
+.env*
 .env.local
 .env.*.local
 *.secret

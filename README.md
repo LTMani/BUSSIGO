@@ -40,9 +40,128 @@ A high-fidelity cross-platform (PC & Mobile) bus driving and travel company mana
    - Dynamic monsoon downpours, wet road friction modulation, and dense morning ghat fog.
    - Layered procedural diesel engine DSP with turbo spool whine, retarder hum, and air-brake purge hisses.
 
-7. **Cross-Platform Architecture**:
-   - Unified input architecture supporting PC (Keyboard/Mouse, Gamepad, Steering Wheel with FFB & H-Shifter) and Mobile (Virtual Wheel, Touch, Tilt/Gyroscope, Dynamic Sliders).
-   - Responsive UI scaling across desktop monitors and mobile aspect ratios.
+---
+
+## Dependencies
+
+The project utilizes standardized dependency manifests and lockfiles:
+
+- **Python Dependencies**: Listed in [`requirements.txt`](file:///requirements.txt) with exact versions pinned in [`requirements.lock`](file:///requirements.lock).
+- **Node/JavaScript Dependencies**: Listed in [`package.json`](file:///package.json) with exact versions pinned in [`package-lock.json`](file:///package-lock.json).
+- **Unity C# Engine**: Configured in `ProjectSettings/ProjectVersion.txt` (Unity 2022.3 LTS / Unity 6 compatible) and `Packages/manifest.json`.
+
+---
+
+## Installation
+
+### 1. Python Environment Setup
+```bash
+python -m venv venv
+# Windows:
+.\venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+### 2. Node & WebGL Environment Setup
+```bash
+npm install
+```
+
+### 3. Docker Installation (Optional)
+```bash
+docker build -t bussigo:latest .
+```
+
+---
+
+## Build
+
+To compile and verify the simulation build:
+
+### Build WebGL Simulator
+```bash
+# Using Python build script:
+python Assets/Tools/build_webgl_local.py
+
+# Using npm:
+npm run build
+
+# Using Makefile:
+make build
+```
+
+---
+
+## Run
+
+To launch the BUSSIGO 3D Simulation engine and local server:
+
+### 1. Direct Python Launcher
+```bash
+python main.py 8080
+# Or:
+python app.py
+```
+
+### 2. Using npm
+```bash
+npm start
+```
+
+### 3. Using Makefile
+```bash
+make run
+```
+
+### 4. Using Docker
+```bash
+docker run -p 8080:8080 bussigo:latest
+```
+
+Once running, open your browser and navigate to:
+👉 **`http://localhost:8080`**
+
+---
+
+## Usage
+
+### Driving Controls (PC Keyboard)
+- **`W` / `Up Arrow`**: Smooth Throttle / Accelerator
+- **`S` / `Down Arrow`**: Service Pneumatic Air Brake & Reverse
+- **`A` / `D`**: Continuous Smooth Steering with speed-dependent resistance
+- **`E`**: Glider Passenger Doors (Open at PNBS/MGBS platforms to board/alight)
+- **`H`**: Authentic Melodic Multi-Tone South Indian Air Horn
+- **`C`**: Cycle Camera Perspectives (Chase, Cockpit Interior, Driver's Eye, Cabin Window, Bumper, Reverse, Mirror, Fly-by)
+- **`R`**: 4-Stage Hydrodynamic Retarder Downhill Brake
+- **`L`**: Headlights High/Low Beams
+- **`Space`**: Emergency Air Parking Brake
+
+### Gameplay Flow
+1. Launch the game and click **`▶ 1. DRIVE: VIJAYAWADA ➔ HYDERABAD (NH65)`**.
+2. At **Vijayawada PNBS Platform 4**, press **`E`** to open doors and board 45 passengers.
+3. Close doors with **`E`**, accelerate onto NH65 highway, and follow the GPS minimap radar.
+4. Pass through **Kanchikacherla FASTag Toll Plaza** (auto RFID payment ₹135 and barrier lift).
+5. Arrive at **Hyderabad MGBS Platform 12**, open doors to drop off passengers, and collect your **+₹38,250** fare earnings and **+850 Driver XP**!
+
+---
+
+## Testing
+
+Execute the automated test suites to verify spatial math, vehicle powertrain, Pacejka tyre friction, route graph connectivity, traffic solvers, and double-entry ledger economics:
+
+```bash
+# Run all subsystem test suites:
+python Assets/Tools/test_runner.py
+
+# Run LOC audit:
+python Assets/Tools/loc_audit.py
+
+# Run WebGL server asset audit:
+python Assets/Tools/test_webgl_server.py
+```
 
 ---
 
@@ -61,26 +180,15 @@ Assets/
 │   ├── World/              # Spline road generator, FASTag toll plazas, terminals, ghat sections
 │   ├── Weather/            # 24h solar cycle, monsoon rain system, surface friction solvers
 │   ├── Economy/            # Double-entry ledger, dynamic pricing, Sankranti surge, bank loans
-│   ├── Company/            # Depot network, facility upgrades, staff rosters, licensing
-│   ├── Fleet/              # Procurement showroom, vehicle depreciation, maintenance tracking
-│   ├── Garage/             # 3D inspector, repair benches, dyno tuning, test track launcher
-│   ├── Customization/      # Multi-layer livery painter, bilingual LED boards, musical horns
-│   ├── Missions/           # Career campaign, night sleeper runs, ghat challenges, fuel trials
-│   ├── Progression/        # Driver XP curves, commercial license tiers, achievement registry
-│   ├── SaveSystem/         # Atomic versioned JSON/binary serializer & schema migration engine
 │   ├── Audio/              # Diesel engine DSP, retarder whine, pneumatic hisses, Indian horns
 │   ├── UI/                 # Responsive PC/Mobile driving HUDs, fleet & financial management dashboards
-│   ├── Input/              # Unified input controller (PC Wheel/Gamepad, Mobile Touch/Tilt)
-│   ├── Localization/       # Multi-language string catalogs (EN, Telugu, Tamil, Kannada, Malayalam, Hindi)
-│   ├── Analytics/          # Abstract gameplay telemetry & event dispatcher
-│   ├── Store/              # Mock sandbox in-app store (Zero real credentials)
-│   └── Debug/              # Telemetry overlay, cheat console, physics diagnostics, FPS profiler
+│   └── Runtime3D/          # 3D Vehicle meshes, procedural textures, scene builder, camera system
 ├── Tests/
 │   ├── EditMode/           # Core, math, vehicle physics, economy, route graph, save system tests
 │   ├── PlayMode/           # Vehicle controller, traffic spawning, passenger flow, GPS navigation tests
 │   └── Integration/        # End-to-end trip completion, tycoon progression, depot dispatch tests
 ├── Editor/                 # Route spline bakers, vehicle balance inspectors, localization tools
-├── Tools/                  # LOC audit runner, build verification automation
+├── Tools/                  # LOC audit runner, build verification automation, local server
 Docs/
 ├── ARCHITECTURE.md         # Technical design & subsystem specifications
 ├── ROUTES_ATLAS.md         # Geographic corridor documentation
@@ -89,11 +197,3 @@ Docs/
 ├── LOC-AUDIT.md            # Verified CLOC audit log
 └── THIRD_PARTY_LICENSES.md # Open-source license attribution
 ```
-
----
-
-## Verification & Hard Acceptance Gates
-
-- **LOC Verification Target**: $\ge 70,000$ verified genuine source LOC.
-- **Audit Tool**: Run `python Assets/Tools/loc_audit.py` to inspect genuine lines of code across all subsystems excluding vendor/generated files.
-- **Automated Tests**: Comprehensive EditMode, PlayMode, and Integration test suites covering all mathematical, physical, and economic logic.
