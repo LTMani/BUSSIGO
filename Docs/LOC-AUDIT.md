@@ -1,16 +1,16 @@
 # BUSSIGO - Verified Source Code & LOC Audit Report
 
 **Audit Status**: PASSED (>= 70,000 LOC)
-**Verified Genuine C# Source LOC**: `76,187`
-**Total Genuine Code LOC (All Languages)**: `80,801`
+**Verified Genuine C# Source LOC**: `76,253`
+**Total Genuine Code LOC (All Languages)**: `81,124`
 
 ## Language Breakdown
 
 | Language | Files | Code Lines | Comments | Blank Lines | Total Lines |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **C#** | 2,543 | 76,187 | 821 | 9,785 | 86,793 |
-| **Python (Tools)** | 21 | 4,241 | 3,381 | 1,237 | 8,859 |
-| **Markdown (Docs/Design)** | 8 | 339 | 0 | 65 | 404 |
+| **C#** | 2,544 | 76,253 | 822 | 9,794 | 86,869 |
+| **Python (Tools)** | 25 | 4,497 | 3,404 | 1,284 | 9,185 |
+| **Markdown (Docs/Design)** | 8 | 340 | 0 | 65 | 405 |
 | **JSON (Data/Config)** | 1 | 34 | 0 | 0 | 34 |
 
 ## Module & Subsystem Breakdown
@@ -21,7 +21,7 @@
 | `Assets/Game/UI` | 354 | 8,102 | 30 | 952 | 9,084 |
 | `Assets/Game/Routes` | 163 | 6,347 | 13 | 669 | 7,029 |
 | `Assets/Game/World` | 161 | 4,913 | 70 | 718 | 5,701 |
-| `Assets/Tools` | 21 | 4,241 | 3,381 | 1,237 | 8,859 |
+| `Assets/Tools` | 25 | 4,497 | 3,404 | 1,284 | 9,185 |
 | `Assets/Game/Economy` | 118 | 4,147 | 6 | 547 | 4,700 |
 | `Assets/Game/Passengers` | 102 | 3,909 | 1 | 509 | 4,419 |
 | `Assets/Game/VehiclePhysics` | 133 | 3,455 | 128 | 563 | 4,146 |
@@ -46,9 +46,9 @@
 | `Assets/Tests/PlayMode` | 21 | 507 | 2 | 63 | 572 |
 | `Assets/Game/Input` | 21 | 477 | 0 | 86 | 563 |
 | `Assets/Game/Localization` | 22 | 448 | 1 | 49 | 498 |
-| `Docs` | 7 | 257 | 0 | 48 | 305 |
+| `Docs` | 7 | 258 | 0 | 48 | 306 |
+| `Assets/Editor` | 2 | 129 | 2 | 19 | 150 |
 | `Root` | 1 | 82 | 0 | 17 | 99 |
-| `Assets/Editor` | 1 | 63 | 1 | 10 | 74 |
 | `Packages` | 1 | 34 | 0 | 0 | 34 |
 
 ## Audit Exclusions Verified
