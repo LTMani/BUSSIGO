@@ -24,3 +24,22 @@ PlayerSettings:
   activeColorSpace: 1
   m_ApiCompatibilityLevel: 6
   runInBackground: 1
+  applicationIdentifier:
+    Android: com.bussigo.southindiatravels
+    Standalone: com.bussigo.southindiatravels
+    iPhone: com.bussigo.southindiatravels
+  bundleVersion: 1.0.0
+  AndroidBundleVersionCode: 1
+  AndroidMinSdkVersion: 24
+  AndroidTargetSdkVersion: 34
+  AndroidTargetArchitectures: 3
+  AndroidBuildSubtarget: 0
+  AndroidPreferredInstallLocation: 1
+  androidGamepadSupportLevel: 2
+  useAPKExpansionFiles: 0
+  stripEngineCode: 1
+  scriptingBackend:
+    Android: 1
+    Standalone: 0
+  il2cppCompilerConfiguration:
+    Android: 2

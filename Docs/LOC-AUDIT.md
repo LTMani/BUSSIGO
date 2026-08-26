@@ -1,16 +1,16 @@
 # BUSSIGO - Verified Source Code & LOC Audit Report
 
 **Audit Status**: PASSED (>= 70,000 LOC)
-**Verified Genuine C# Source LOC**: `76,044`
-**Total Genuine Code LOC (All Languages)**: `80,525`
+**Verified Genuine C# Source LOC**: `76,187`
+**Total Genuine Code LOC (All Languages)**: `80,801`
 
 ## Language Breakdown
 
 | Language | Files | Code Lines | Comments | Blank Lines | Total Lines |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **C#** | 2,542 | 76,044 | 817 | 9,761 | 86,622 |
-| **Python (Tools)** | 20 | 4,187 | 3,376 | 1,228 | 8,791 |
-| **Markdown (Docs/Design)** | 7 | 260 | 0 | 50 | 310 |
+| **C#** | 2,543 | 76,187 | 821 | 9,785 | 86,793 |
+| **Python (Tools)** | 21 | 4,241 | 3,381 | 1,237 | 8,859 |
+| **Markdown (Docs/Design)** | 8 | 339 | 0 | 65 | 404 |
 | **JSON (Data/Config)** | 1 | 34 | 0 | 0 | 34 |
 
 ## Module & Subsystem Breakdown
@@ -21,7 +21,7 @@
 | `Assets/Game/UI` | 354 | 8,102 | 30 | 952 | 9,084 |
 | `Assets/Game/Routes` | 163 | 6,347 | 13 | 669 | 7,029 |
 | `Assets/Game/World` | 161 | 4,913 | 70 | 718 | 5,701 |
-| `Assets/Tools` | 20 | 4,187 | 3,376 | 1,228 | 8,791 |
+| `Assets/Tools` | 21 | 4,241 | 3,381 | 1,237 | 8,859 |
 | `Assets/Game/Economy` | 118 | 4,147 | 6 | 547 | 4,700 |
 | `Assets/Game/Passengers` | 102 | 3,909 | 1 | 509 | 4,419 |
 | `Assets/Game/VehiclePhysics` | 133 | 3,455 | 128 | 563 | 4,146 |
@@ -31,8 +31,8 @@
 | `Assets/Game/Fleet` | 79 | 2,555 | 100 | 300 | 2,955 |
 | `Assets/Game/Company` | 79 | 2,323 | 1 | 316 | 2,640 |
 | `Assets/Game/Missions` | 111 | 2,224 | 0 | 236 | 2,460 |
+| `Assets/Game/Runtime3D` | 22 | 1,987 | 122 | 379 | 2,488 |
 | `Assets/Game/Audio` | 91 | 1,909 | 34 | 285 | 2,228 |
-| `Assets/Game/Runtime3D` | 22 | 1,907 | 119 | 365 | 2,391 |
 | `Assets/Game/Progression` | 101 | 1,803 | 0 | 214 | 2,017 |
 | `Assets/Game/Weather` | 51 | 1,599 | 60 | 363 | 2,022 |
 | `Assets/Game/Core` | 16 | 1,104 | 5 | 176 | 1,285 |
@@ -46,8 +46,9 @@
 | `Assets/Tests/PlayMode` | 21 | 507 | 2 | 63 | 572 |
 | `Assets/Game/Input` | 21 | 477 | 0 | 86 | 563 |
 | `Assets/Game/Localization` | 22 | 448 | 1 | 49 | 498 |
-| `Docs` | 6 | 178 | 0 | 33 | 211 |
+| `Docs` | 7 | 257 | 0 | 48 | 305 |
 | `Root` | 1 | 82 | 0 | 17 | 99 |
+| `Assets/Editor` | 1 | 63 | 1 | 10 | 74 |
 | `Packages` | 1 | 34 | 0 | 0 | 34 |
 
 ## Audit Exclusions Verified
