@@ -189,6 +189,15 @@ namespace Bussigo.Game.Runtime3D.Vehicle
             }
         }
 
+        public void UpdatePassengerPayload(int passengerCount)
+        {
+            float passengerWeightKg = passengerCount * 75f;
+            if (rb != null)
+            {
+                rb.mass = curbMassKg + passengerWeightKg;
+            }
+        }
+
         private void CalculateChassisDynamics()
         {
             Vector3 forwardVelocity = Vector3.Project(rb.linearVelocity, transform.forward);

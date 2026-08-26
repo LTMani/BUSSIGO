@@ -76,6 +76,7 @@ namespace Bussigo.Game.Runtime3D.Passengers
                         {
                             isBoardingComplete = true;
                             originStation.arePassengersBoarded = true;
+                            playerBus.UpdatePassengerPayload(currentBoardedPassengers);
                             Debug.Log($"[Boarding] All {currentBoardedPassengers} passengers boarded. Ready for departure to Hyderabad!");
                         }
                     }
@@ -92,6 +93,7 @@ namespace Bussigo.Game.Runtime3D.Passengers
                     {
                         boardingTimer = 0f;
                         currentBoardedPassengers--;
+                        playerBus.UpdatePassengerPayload(currentBoardedPassengers);
 
                         if (currentBoardedPassengers <= 0)
                         {

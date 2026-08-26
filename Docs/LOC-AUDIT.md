@@ -1,14 +1,14 @@
 # BUSSIGO - Verified Source Code & LOC Audit Report
 
 **Audit Status**: PASSED (>= 70,000 LOC)
-**Verified Genuine C# Source LOC**: `76,253`
-**Total Genuine Code LOC (All Languages)**: `81,205`
+**Verified Genuine C# Source LOC**: `76,534`
+**Total Genuine Code LOC (All Languages)**: `81,486`
 
 ## Language Breakdown
 
 | Language | Files | Code Lines | Comments | Blank Lines | Total Lines |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **C#** | 2,544 | 76,253 | 822 | 9,794 | 86,869 |
+| **C#** | 2,544 | 76,534 | 838 | 9,831 | 87,203 |
 | **Python (Tools)** | 25 | 4,510 | 3,403 | 1,288 | 9,201 |
 | **Markdown (Docs/Design)** | 9 | 408 | 0 | 85 | 493 |
 | **JSON (Data/Config)** | 1 | 34 | 0 | 0 | 34 |
@@ -30,8 +30,8 @@
 | `Assets/Game/Customization` | 112 | 2,582 | 6 | 275 | 2,863 |
 | `Assets/Game/Fleet` | 79 | 2,555 | 100 | 300 | 2,955 |
 | `Assets/Game/Company` | 79 | 2,323 | 1 | 316 | 2,640 |
+| `Assets/Game/Runtime3D` | 22 | 2,268 | 138 | 416 | 2,822 |
 | `Assets/Game/Missions` | 111 | 2,224 | 0 | 236 | 2,460 |
-| `Assets/Game/Runtime3D` | 22 | 1,987 | 122 | 379 | 2,488 |
 | `Assets/Game/Audio` | 91 | 1,909 | 34 | 285 | 2,228 |
 | `Assets/Game/Progression` | 101 | 1,803 | 0 | 214 | 2,017 |
 | `Assets/Game/Weather` | 51 | 1,599 | 60 | 363 | 2,022 |
