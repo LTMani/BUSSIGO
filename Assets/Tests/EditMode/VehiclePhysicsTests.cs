@@ -1,55 +1,91 @@
 using System;
-using Bussigo.Game.Core;
-using Bussigo.Game.Vehicles;
-using Bussigo.Game.VehiclePhysics;
+using NUnit.Framework;
+using UnityEngine;
+using Bussigo.Physics;
 
 namespace Bussigo.Tests.EditMode
 {
-    public static class VehiclePhysicsTests
+    [TestFixture]
+    public class VehiclePhysicsTests
     {
-        public static void RunAllTests()
+        [Test]
+        public void EnginePowertrain_TorqueCurve_PeakInOptimumBand()
         {
-            TestPacejkaTyreModel();
-            TestAirBrakePneumatics();
-            TestDieselTorqueCurve();
-            TestChassisRigidBodyIntegration();
+            var powertrain = new EnginePowertrain();
+
+            // Idle torque (650 RPM)
+            powertrain.currentRpm = 650f;
+            float idleTorque = powertrain.CalculateEngineTorque(1.0f);
+            Assert.AreEqual(1400f * 0.70f, idleTorque, 1.0f);
+
+            // Peak torque (1400 RPM)
+            powertrain.currentRpm = 1400f;
+            float peakTorque = powertrain.CalculateEngineTorque(1.0f);
+            Assert.AreEqual(1400f, peakTorque, 0.1f);
+
+            // Redline torque (2400 RPM)
+            powertrain.currentRpm = 2400f;
+            float redlineTorque = powertrain.CalculateEngineTorque(1.0f);
+            Assert.AreEqual(1400f * 0.75f, redlineTorque, 1.0f);
         }
 
-        public static void TestPacejkaTyreModel()
+        [Test]
+        public void EnginePowertrain_GearShifting_ChangesRatios()
         {
-            var tyre = new PacejkaTyreModel();
-            float force = tyre.EvaluateMagicFormula(0.12f, 25000f, 1.0f);
-            if (force <= 0.0f) throw new Exception("Pacejka tyre force should be positive for positive slip.");
-            if (force > 25000f * 1.5f) throw new Exception("Pacejka tyre force exceeded realistic friction limit.");
+            var powertrain = new EnginePowertrain();
+            powertrain.currentGear = 1;
+            Assert.AreEqual(6.82f, powertrain.GetCurrentGearRatio());
+
+            powertrain.ShiftUp();
+            Assert.AreEqual(2, powertrain.currentGear);
+            Assert.AreEqual(3.68f, powertrain.GetCurrentGearRatio());
+
+            powertrain.ShiftDown();
+            Assert.AreEqual(1, powertrain.currentGear);
         }
 
-        public static void TestAirBrakePneumatics()
+        [Test]
+        public void PneumaticAirCircuit_Braking_ReducesAirPressureAndRecovers()
         {
-            var airBrakes = new PneumaticAirBrakeSystem();
-            airBrakes.SetTreadleFootValve(1.0f);
-            airBrakes.Update(0.1f, 1200f, true);
+            var airCircuit = new PneumaticAirCircuit();
+            airCircuit.currentReservoirPressureBar = 8.5f;
 
-            float brakeTorque = airBrakes.CalculateBrakeTorqueNm(8000f, true);
-            if (brakeTorque <= 0.0f) throw new Exception("Air brake torque should be non-zero when pedal applied.");
+            // Apply full brake for 2 seconds without engine compressor
+            airCircuit.UpdateCircuit(2.0f, brakeInput01: 1.0f, engineRunning: false);
+            Assert.Less(airCircuit.currentReservoirPressureBar, 8.5f);
+
+            // Run compressor without brake for 5 seconds
+            float drainedPressure = airCircuit.currentReservoirPressureBar;
+            airCircuit.UpdateCircuit(5.0f, brakeInput01: 0.0f, engineRunning: true);
+            Assert.Greater(airCircuit.currentReservoirPressureBar, drainedPressure);
         }
 
-        public static void TestDieselTorqueCurve()
+        [Test]
+        public void RetarderBrakeSystem_Stages_ProvideProgressiveDrag()
         {
-            var spec = new VehicleChassisSpec();
-            var engine = new DieselPowertrain(spec);
-            engine.StartEngine();
+            var retarder = new RetarderBrakeSystem();
+            Assert.AreEqual(0f, retarder.CalculateRetarderBrakingForce(60f));
 
-            float torque = engine.EvaluateTorqueCurve(1400f, 1.0f);
-            if (torque < spec.MaxTorqueNm * 0.8f) throw new Exception("Torque at peak plateau should be near maximum.");
+            retarder.SetStage(1);
+            float force1 = retarder.CalculateRetarderBrakingForce(60f);
+            Assert.Greater(force1, 0f);
+
+            retarder.SetStage(4);
+            float force4 = retarder.CalculateRetarderBrakingForce(60f);
+            Assert.Greater(force4, force1);
         }
 
-        public static void TestChassisRigidBodyIntegration()
+        [Test]
+        public void HeavyVehiclePhysicsModel_Payload_IncreasesTotalMass()
         {
-            var spec = new VehicleChassisSpec();
-            var body = new ChassisRigidBody(spec);
-            body.IntegratePhysics(15000f, 0f, 0f, 0f, 0f, 0f, 0.02f);
+            var model = new HeavyVehiclePhysicsModel();
+            model.curbMassKg = 14500f;
+            Assert.AreEqual(14500f, model.TotalMassKg);
 
-            if (body.ForwardSpeedMps <= 0.0f) throw new Exception("Chassis should accelerate forward under positive drive force.");
+            // 45 passengers with 15kg luggage each (80kg total per passenger)
+            model.UpdatePayload(45, luggageMassPerPaxKg: 15f);
+            float expectedPayload = 45 * 80f; // 3,600 kg
+            Assert.AreEqual(14500f + expectedPayload, model.TotalMassKg);
         }
     }
 }
