@@ -51,7 +51,7 @@ def main_game_loop():
             if r_choice in ['1', '2', '3', '4']:
                 selected_route = routes[int(r_choice) - 1]
                 simulate_trip(selected_route, selected_bus, coins, xp, driver_level)
-                # Award rewards
+                
                 pax_count = random.randint(38, 52)
                 gross_fare = pax_count * selected_route['fare']
                 diesel_cost = (selected_route['dist'] / 100.0) * 26.0 * 94.0 # 26L/100km @ ₹94/L
@@ -142,7 +142,7 @@ def simulate_trip(route, bus, coins, xp, level):
 
     for stage_name, speed, air in stages:
         time.sleep(0.4)
-        print(f"  --> [{stage_name}] Speed: {speed:F1} km/h | Air Pressure: {air:F1} bar | Retarder: Auto")
+        print(f"  --> [{stage_name}] Speed: {speed:.1f} km/h | Air Pressure: {air:.1f} bar | Retarder: Auto")
 
     print("\n✓ TRIP COMPLETED SAFELY WITH 98% PASSENGER COMFORT SCORE!")
 
