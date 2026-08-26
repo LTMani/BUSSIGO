@@ -1,27 +1,25 @@
 using System;
 using UnityEngine;
+using Bussigo.Physics;
 
 namespace Bussigo.Vehicle
 {
     [RequireComponent(typeof(Rigidbody))]
     public class BusChassisController : MonoBehaviour
     {
-        [Header("Chassis & Powertrain")]
-        public float curbMassKg = 14500f;
-        public float engineHorsepower = 360f;
-        public float maxEngineTorqueNm = 1400f;
-        public float maxSteeringAngleDegrees = 34f;
+        [Header("Physics Core Model")]
+        public HeavyVehiclePhysicsModel physicsModel = new HeavyVehiclePhysicsModel();
 
-        [Header("Pneumatics & Retarder")]
-        public float primaryAirPressureBar = 8.5f;
-        public int retarderLevel = 0; // 0 = Off, 1..4 = 25%..100%
-
-        [Header("Actuators & State")]
+        [Header("Runtime State")]
         public bool isDoorOpen = false;
         public bool isHeadlightsActive = false;
         public bool isHornSounding = false;
         public float currentSpeedKmh = 0f;
-        public float currentEngineRpm = 650f;
+
+        public float currentEngineRpm => physicsModel.Powertrain.currentRpm;
+        public int currentGear => physicsModel.Powertrain.currentGear;
+        public float primaryAirPressureBar => physicsModel.AirBrakes.currentReservoirPressureBar;
+        public int retarderLevel => physicsModel.Retarder.currentStage;
 
         private Rigidbody rb;
         private float currentSteerInput = 0f;
@@ -31,7 +29,7 @@ namespace Bussigo.Vehicle
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
-            rb.mass = curbMassKg;
+            UpdateRigidbodyMass();
             rb.centerOfMass = new Vector3(0f, -0.65f, 0.2f);
             rb.interpolation = RigidbodyInterpolation.Interpolate;
         }
@@ -53,46 +51,57 @@ namespace Bussigo.Vehicle
 
         public void CycleRetarder()
         {
-            retarderLevel = (retarderLevel + 1) % 5;
+            physicsModel.Retarder.CycleStage();
         }
+
+        public void ShiftUp() => physicsModel.Powertrain.ShiftUp();
+        public void ShiftDown() => physicsModel.Powertrain.ShiftDown();
 
         public void UpdatePayloadMass(int passengerCount)
         {
-            rb.mass = curbMassKg + (passengerCount * 75f);
+            physicsModel.UpdatePayload(passengerCount);
+            UpdateRigidbodyMass();
+        }
+
+        private void UpdateRigidbodyMass()
+        {
+            if (rb != null)
+            {
+                rb.mass = physicsModel.TotalMassKg;
+            }
         }
 
         private void FixedUpdate()
         {
             currentSpeedKmh = Vector3.Dot(rb.linearVelocity, transform.forward) * 3.6f;
 
-            // Speed-sensitive steering curve
-            float speedFactor = Mathf.Clamp01(1.0f - (Mathf.Abs(currentSpeedKmh) / 110.0f));
-            float targetSteerAngle = currentSteerInput * maxSteeringAngleDegrees * (0.35f + 0.65f * speedFactor);
+            // Step core physics subsystem
+            physicsModel.StepPhysics(Time.fixedDeltaTime, currentThrottleInput, currentBrakeInput, currentSteerInput, currentSpeedKmh);
 
+            // Steering Yaw Application
+            float targetSteerAngle = physicsModel.CalculateSteerAngle(currentSteerInput, currentSpeedKmh);
             if (Mathf.Abs(currentSteerInput) > 0.01f && Mathf.Abs(currentSpeedKmh) > 0.5f)
             {
                 float turnDir = Mathf.Sign(currentSpeedKmh);
-                rb.AddTorque(transform.up * (targetSteerAngle * 900f * turnDir * Time.fixedDeltaTime), ForceMode.Acceleration);
+                rb.AddTorque(transform.up * (targetSteerAngle * 950f * turnDir * Time.fixedDeltaTime), ForceMode.Acceleration);
             }
 
-            // Propulsion & Braking
+            // Driveline Propulsion
             if (currentThrottleInput > 0.01f && !isDoorOpen)
             {
-                float driveForce = maxEngineTorqueNm * currentThrottleInput * 3.5f;
+                float wheelTorque = physicsModel.Powertrain.CalculateWheelTorque(currentThrottleInput);
+                float driveForce = wheelTorque / physicsModel.wheelRadiusMeters;
                 rb.AddForce(transform.forward * driveForce, ForceMode.Force);
             }
 
-            if (currentBrakeInput > 0.01f)
+            // Total Braking (Air Brakes + Retarder)
+            if (currentBrakeInput > 0.01f || physicsModel.Retarder.currentStage > 0)
             {
-                float brakeForce = 52000f * currentBrakeInput * (primaryAirPressureBar / 8.5f);
-                rb.AddForce(-transform.forward * (brakeForce * Mathf.Sign(currentSpeedKmh)), ForceMode.Force);
-            }
-
-            // Retarder Drag
-            if (retarderLevel > 0 && Mathf.Abs(currentSpeedKmh) > 5.0f)
-            {
-                float retarderForce = retarderLevel * 4500f;
-                rb.AddForce(-transform.forward * (retarderForce * Mathf.Sign(currentSpeedKmh)), ForceMode.Force);
+                float totalBrakeForce = physicsModel.CalculateTotalBrakingForce(currentBrakeInput, currentSpeedKmh);
+                if (Mathf.Abs(currentSpeedKmh) > 0.1f)
+                {
+                    rb.AddForce(-transform.forward * (totalBrakeForce * Mathf.Sign(currentSpeedKmh)), ForceMode.Force);
+                }
             }
         }
     }
