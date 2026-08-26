@@ -1,61 +1,50 @@
 #!/usr/bin/env python3
 """
 BUSSIGO - Local WebGL HTTP Server Launcher (Multi-threaded)
-Serves the compiled 3D WebGL game on http://localhost:8080 with proper WASM/JS MIME types.
+Serves the compiled 3D WebGL game on http://localhost:8080.
 """
 
 import os
 import sys
-import mimetypes
 from pathlib import Path
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 class WebGLHTTPRequestHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
-        # Add Cross-Origin headers for modern browser WASM & WebAudio execution
-        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
-        self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
         super().end_headers()
 
     def guess_type(self, path):
-        if path.endswith(".wasm"):
+        if str(path).endswith(".wasm"):
             return "application/wasm"
-        elif path.endswith(".data"):
+        elif str(path).endswith(".data"):
             return "application/octet-stream"
-        elif path.endswith(".js"):
+        elif str(path).endswith(".js"):
             return "application/javascript"
-        elif path.endswith(".json"):
+        elif str(path).endswith(".json"):
             return "application/json"
-        elif path.endswith(".html"):
+        elif str(path).endswith(".html"):
             return "text/html"
         return super().guess_type(path)
-
-    def log_message(self, format, *args):
-        # Clean logging
-        sys.stderr.write(f"[BUSSIGO WebGL Server] {self.address_string()} - {format%args}\n")
 
 def serve_webgl(port=8080):
     project_dir = Path(__file__).resolve().parent.parent.parent
     webgl_dir = project_dir / "Build" / "WebGL"
 
     if not webgl_dir.exists() or not (webgl_dir / "index.html").exists():
-        print("=" * 75)
-        print("   BUSSIGO - LOCAL WEBGL HTTP SERVER")
-        print("=" * 75)
-        print(f"\n[!] Warning: WebGL build not found at: {webgl_dir}")
+        print(f"[!] Warning: WebGL build not found at: {webgl_dir}")
         return
 
     os.chdir(str(webgl_dir))
     
     ThreadingHTTPServer.allow_reuse_address = True
-    server_address = ("0.0.0.0", port)
+    server_address = ("127.0.0.1", port)
     try:
         httpd = ThreadingHTTPServer(server_address, WebGLHTTPRequestHandler)
     except OSError:
-        port = 8081
-        server_address = ("0.0.0.0", port)
+        port = 8085
+        server_address = ("127.0.0.1", port)
         httpd = ThreadingHTTPServer(server_address, WebGLHTTPRequestHandler)
 
     print("=" * 75)
@@ -66,7 +55,6 @@ def serve_webgl(port=8080):
     print(f"Direct IP URL:     http://127.0.0.1:{port}")
     print("Status:            Ready for desktop browser connections")
     print("=" * 75)
-    print("\nPress Ctrl+C to stop the server.\n")
 
     try:
         httpd.serve_forever()
