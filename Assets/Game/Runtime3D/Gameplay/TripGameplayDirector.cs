@@ -23,6 +23,8 @@ namespace Bussigo.Game.Runtime3D.Gameplay
         public TripSummaryModalController tripSummaryModal;
         public PassengerBoardingSystem3D passengerBoardingSystem;
         public MobileTouchInputController mobileTouchInput;
+        public GPSMinimapRadarController minimapRadar;
+        public MonsoonRainParticleController weatherController;
 
         [Header("Trip Metrics")]
         public float startFuelLiters = 280f;
@@ -78,7 +80,7 @@ namespace Bussigo.Game.Runtime3D.Gameplay
                 countPerDirection: 12
             );
 
-            // 6. Setup Driving HUD & Summary Modals
+            // 6. Setup Driving HUD, Minimap & Summary Modals
             GameObject uiRoot = new GameObject("HUD_CanvasRoot");
             hudController = uiRoot.AddComponent<DrivingCockpitHUDController>();
             hudController.busController = busController;
@@ -89,6 +91,12 @@ namespace Bussigo.Game.Runtime3D.Gameplay
             mobileTouchInput = uiRoot.AddComponent<MobileTouchInputController>();
             mobileTouchInput.busController = busController;
             mobileTouchInput.cameraSystem = cameraSystem;
+
+            minimapRadar = uiRoot.AddComponent<GPSMinimapRadarController>();
+            minimapRadar.playerBus = busController;
+
+            weatherController = uiRoot.AddComponent<MonsoonRainParticleController>();
+            weatherController.playerBus = busController;
 
             // 7. Setup Directional Sunlight & Sky
             GameObject sunLightObj = new GameObject("DirectionalSunlight");
@@ -103,7 +111,7 @@ namespace Bussigo.Game.Runtime3D.Gameplay
             RenderSettings.fogColor = new Color(0.75f, 0.82f, 0.90f);
             RenderSettings.fogDensity = 0.0012f;
 
-            Debug.Log("[BUSSIGO] 3D Playable Route Initialized: Vijayawada ➔ Hyderabad NH65.");
+            Debug.Log("[BUSSIGO] 3D Playable Route Initialized: Vijayawada ➔ Hyderabad NH65 with Minimap & Audio Synthesis.");
         }
 
         private void Update()

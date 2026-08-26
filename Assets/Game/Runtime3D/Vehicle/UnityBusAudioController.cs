@@ -15,11 +15,38 @@ namespace Bussigo.Game.Runtime3D.Vehicle
         public AudioSource retarderAudioSource;
 
         [Header("Engine Audio Tuning")]
-        public float idlePitch = 0.65f;
-        public float maxPitch = 2.1f;
-        public float baseVolume = 0.4f;
+        public float idlePitch = 0.70f;
+        public float maxPitch = 2.2f;
+        public float baseVolume = 0.45f;
 
         private float previousBrakeInput = 0f;
+
+        private void Start()
+        {
+            InitializeSyntheticAudioIfEmpty();
+        }
+
+        private void InitializeSyntheticAudioIfEmpty()
+        {
+            if (engineAudioSource != null && engineAudioSource.clip == null)
+            {
+                engineAudioSource.clip = ProceduralAudioClipSynthesizer.GenerateDieselEngineClip();
+                engineAudioSource.loop = true;
+                engineAudioSource.Play();
+            }
+
+            if (airBrakePurgeAudioSource != null && airBrakePurgeAudioSource.clip == null)
+            {
+                airBrakePurgeAudioSource.clip = ProceduralAudioClipSynthesizer.GenerateAirPurgeHissClip();
+                airBrakePurgeAudioSource.loop = false;
+            }
+
+            if (airHornAudioSource != null && airHornAudioSource.clip == null)
+            {
+                airHornAudioSource.clip = ProceduralAudioClipSynthesizer.GenerateMelodicAirHornClip();
+                airHornAudioSource.loop = true;
+            }
+        }
 
         private void Update()
         {
@@ -37,11 +64,11 @@ namespace Bussigo.Game.Runtime3D.Vehicle
             {
                 float normRpm = Mathf.InverseLerp(busController.idleRpm, busController.maxRpm, busController.currentEngineRpm);
                 engineAudioSource.pitch = Mathf.Lerp(idlePitch, maxPitch, normRpm);
-                engineAudioSource.volume = Mathf.Lerp(baseVolume, 1.0f, busController.currentThrottleInput01 * 0.5f + normRpm * 0.5f);
+                engineAudioSource.volume = Mathf.Lerp(baseVolume, 0.95f, busController.currentThrottleInput01 * 0.4f + normRpm * 0.6f);
                 if (!engineAudioSource.isPlaying) engineAudioSource.Play();
             }
 
-            if (turboAudioSource != null)
+            if (turboAudioSource != null && turboAudioSource.clip != null)
             {
                 float turboLoad = busController.currentThrottleInput01 * Mathf.Clamp01(busController.currentEngineRpm / 1600f);
                 turboAudioSource.volume = turboLoad * 0.7f;
@@ -81,7 +108,7 @@ namespace Bussigo.Game.Runtime3D.Vehicle
 
         private void UpdateRetarderSound()
         {
-            if (retarderAudioSource != null)
+            if (retarderAudioSource != null && retarderAudioSource.clip != null)
             {
                 if (busController.currentRetarderLevel > 0 && Mathf.Abs(busController.currentSpeedKmh) > 10f)
                 {
