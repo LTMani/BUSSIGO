@@ -1,0 +1,128 @@
+# BUSSIGO V2 — Material Library
+newmtl Mat_Exterior_Body
+Kd 0.78 0.12 0.16
+Ks 0.5 0.5 0.5
+Ns 80
+
+newmtl Mat_Exterior_Front
+Kd 0.78 0.12 0.16
+Ks 0.5 0.5 0.5
+Ns 80
+
+newmtl Mat_Exterior_Rear
+Kd 0.78 0.12 0.16
+Ks 0.5 0.5 0.5
+Ns 80
+
+newmtl Mat_Exterior_Windows_Left
+Kd 0.1 0.15 0.22
+d 0.65
+
+newmtl Mat_Exterior_Windows_Right
+Kd 0.1 0.15 0.22
+d 0.65
+
+newmtl Mat_Exterior_Windshield
+Kd 0.12 0.18 0.25
+d 0.55
+
+newmtl Mat_Exterior_Mirrors_Left
+Kd 0.1 0.1 0.1
+
+newmtl Mat_Exterior_Mirrors_Right
+Kd 0.1 0.1 0.1
+
+newmtl Mat_Exterior_Headlights_Left
+Kd 0.95 0.95 0.9
+
+newmtl Mat_Exterior_Headlights_Right
+Kd 0.95 0.95 0.9
+
+newmtl Mat_Exterior_Indicators_Left
+Kd 1.0 0.6 0.0
+
+newmtl Mat_Exterior_Indicators_Right
+Kd 1.0 0.6 0.0
+
+newmtl Mat_Exterior_Doors
+Kd 0.78 0.12 0.16
+
+newmtl Mat_Wheel
+Kd 0.12 0.12 0.12
+Ks 0.2 0.2 0.2
+Ns 20
+
+newmtl Mat_Interior_DriverCockpit
+Kd 0.15 0.15 0.18
+
+newmtl Mat_Interior_Dashboard
+Kd 0.12 0.12 0.14
+
+newmtl Mat_Interior_SteeringWheel
+Kd 0.1 0.1 0.1
+
+newmtl Mat_Interior_Aisle
+Kd 0.2 0.22 0.25
+
+newmtl Mat_Interior_PassengerArea
+Kd 0.3 0.32 0.35
+
+newmtl Mat_Interior_Seats_Row1_Left
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row1_Right
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row2_Left
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row2_Right
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row3_Left
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row3_Right
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row4_Left
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row4_Right
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row5_Left
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row5_Right
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row6_Left
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row6_Right
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row7_Left
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row7_Right
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row8_Left
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row8_Right
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row9_Left
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row9_Right
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row10_Left
+Kd 0.18 0.22 0.45
+
+newmtl Mat_Interior_Seats_Row10_Right
+Kd 0.18 0.22 0.45

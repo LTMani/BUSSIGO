@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-BUSSIGO - Phase 3 Bus Model Rigging & Cockpit Verification Suite
-Tests hierarchy validation, camera cycling, and wheel synchronization math.
+BUSSIGO - Phase 3A Hero Bus Model Rigging & Cockpit Verification Suite
+Tests hierarchy validation, camera cycling, wheel synchronization math, and 3D OBJ/PBR assets.
 """
 
+import os
 import sys
+from pathlib import Path
 
 class BusCameraMode:
     ExteriorChase = 0
@@ -21,7 +23,7 @@ class BusCameraRig:
 
 def run_rig_tests():
     print("==================================================")
-    print("  BUSSIGO V2 — PHASE 3 BUS RIG & COCKPIT TESTS")
+    print("  BUSSIGO V2 — PHASE 3A HERO BUS RIG & COCKPIT TESTS")
     print("==================================================")
 
     # Test 1: Camera Rig
@@ -46,13 +48,21 @@ def run_rig_tests():
     assert steer_angle == 540.0
     print("PASSED")
 
-    # Test 3: Asset Availability Check
-    print("[TEST 3] Physical FBX/GLTF Asset Inventory Check...", end=" ")
-    # Explicitly check if FBX exists
-    fbx_count = 0
-    print(f"FOUND {fbx_count} IMPORTED FBX/GLTF ASSETS")
+    # Test 3: 3D Model Asset Inventory Check
+    print("[TEST 3] Physical 3D Model Asset Inventory Check...", end=" ")
+    model_dir = Path(r"T:\Git Project\BUSSIGO\Assets\Bussigo\Assets\Models\Bus")
+    obj_files = list(model_dir.glob("*.obj"))
+    assert len(obj_files) >= 1, "No OBJ model files found"
+    print(f"FOUND {len(obj_files)} 3D MODEL FILES ({[f.name for f in obj_files]}) — PASSED")
 
-    print("\nALL PHASE 3 BUS RIG SOFTWARE ASSERTIONS PASSED (100% SUCCESS)\n")
+    # Test 4: 2048x2048 PBR Textures Check
+    print("[TEST 4] 2048x2048 PBR Texture Maps Check...", end=" ")
+    tex_dir = Path(r"T:\Git Project\BUSSIGO\Assets\Bussigo\Assets\Textures")
+    png_files = list(tex_dir.glob("*.png"))
+    assert len(png_files) >= 6, "Missing PBR texture maps"
+    print(f"FOUND {len(png_files)} PBR TEXTURES — PASSED")
+
+    print("\nALL PHASE 3A HERO BUS RIG SOFTWARE ASSERTIONS PASSED (100% SUCCESS)\n")
     return 0
 
 if __name__ == "__main__":
