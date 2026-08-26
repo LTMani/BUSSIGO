@@ -49,12 +49,13 @@ def serve_webgl(port=8080):
 
     os.chdir(str(webgl_dir))
     
-    server_address = ("127.0.0.1", port)
+    ThreadingHTTPServer.allow_reuse_address = True
+    server_address = ("0.0.0.0", port)
     try:
         httpd = ThreadingHTTPServer(server_address, WebGLHTTPRequestHandler)
     except OSError:
         port = 8081
-        server_address = ("127.0.0.1", port)
+        server_address = ("0.0.0.0", port)
         httpd = ThreadingHTTPServer(server_address, WebGLHTTPRequestHandler)
 
     print("=" * 75)
@@ -62,6 +63,7 @@ def serve_webgl(port=8080):
     print("=" * 75)
     print(f"Serving Directory: {webgl_dir}")
     print(f"Localhost URL:     http://localhost:{port}")
+    print(f"Direct IP URL:     http://127.0.0.1:{port}")
     print("Status:            Ready for desktop browser connections")
     print("=" * 75)
     print("\nPress Ctrl+C to stop the server.\n")
