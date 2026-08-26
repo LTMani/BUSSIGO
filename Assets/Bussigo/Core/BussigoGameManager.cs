@@ -3,27 +3,21 @@ using UnityEngine;
 
 namespace Bussigo.Core
 {
-    public enum GamePhase
-    {
-        MainMenu = 0,
-        TerminalBoarding = 1,
-        HighwayDriving = 2,
-        TollPlazaApproaching = 3,
-        DestinationArrival = 4,
-        TripSummary = 5
-    }
-
-    public class BussigoGameManager : MonoBehaviour
+    /// <summary>
+    /// Master orchestrator for the BUSSIGO game lifecycle and service coordination.
+    /// </summary>
+    public class BussigoGameManager : MonoBehaviour, IService
     {
         public static BussigoGameManager Instance { get; private set; }
 
-        [Header("Runtime State")]
-        public GamePhase currentPhase = GamePhase.MainMenu;
+        public GameStateMachine StateMachine { get; private set; }
+
+        [Header("Corridor Configuration")]
         public string activeCorridorName = "NH65: Vijayawada PNBS -> Hyderabad MGBS";
         public float totalRouteDistanceKm = 275.0f;
         public float currentDistanceDrivenKm = 0.0f;
 
-        [Header("Trip Live Telemetry")]
+        [Header("Trip Metrics")]
         public int boardedPassengers = 0;
         public int maxPassengerCapacity = 45;
         public float fuelLiters = 340.0f;
@@ -36,6 +30,7 @@ namespace Bussigo.Core
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+                Initialize();
             }
             else
             {
@@ -43,39 +38,66 @@ namespace Bussigo.Core
             }
         }
 
+        public void Initialize()
+        {
+            StateMachine = new GameStateMachine();
+            StateMachine.RegisterState(new MainMenuState());
+            StateMachine.RegisterState(new TerminalBoardingState());
+            StateMachine.RegisterState(new HighwayDrivingState());
+            StateMachine.RegisterState(new DestinationArrivalState());
+            StateMachine.RegisterState(new TripSummaryState());
+
+            StateMachine.ChangeState(GamePhase.MainMenu);
+
+            ServiceLocator.Register<BussigoGameManager>(this);
+            Debug.Log("[BUSSIGO] Core BussigoGameManager initialized successfully.");
+        }
+
+        public void Shutdown()
+        {
+            EventBus.Clear();
+            Debug.Log("[BUSSIGO] BussigoGameManager shutdown complete.");
+        }
+
+        private void Update()
+        {
+            StateMachine?.Update(Time.deltaTime);
+        }
+
         public void StartTrip()
         {
-            currentPhase = GamePhase.TerminalBoarding;
             currentDistanceDrivenKm = 0f;
             boardedPassengers = 0;
-            Debug.Log("[BUSSIGO] Trip started at Vijayawada PNBS Platform 4. Ready for passenger boarding.");
+            StateMachine.ChangeState(GamePhase.TerminalBoarding);
+            EventBus.Publish(new TripStartedEvent(activeCorridorName, totalRouteDistanceKm));
         }
 
         public void CompleteBoarding()
         {
             boardedPassengers = maxPassengerCapacity;
-            currentPhase = GamePhase.HighwayDriving;
-            earnedRevenueINR = boardedPassengers * 850; // ₹850 per ticket
-            Debug.Log($"[BUSSIGO] Boarding complete: {boardedPassengers} passengers boarded. Revenue: ₹{earnedRevenueINR}.");
+            earnedRevenueINR = boardedPassengers * 850;
+            StateMachine.ChangeState(GamePhase.HighwayDriving);
+            EventBus.Publish(new PassengerBoardingCompletedEvent(boardedPassengers, earnedRevenueINR));
         }
 
-        public void DeductFastagToll(int tollAmount)
+        public void DeductFastagToll(string plazaName, int tollAmount)
         {
             fastagBalanceINR = Mathf.Max(0, fastagBalanceINR - tollAmount);
-            Debug.Log($"[BUSSIGO] FASTag Toll Paid: ₹{tollAmount}. New Balance: ₹{fastagBalanceINR}.");
+            EventBus.Publish(new TollPlazaCrossedEvent(plazaName, tollAmount, fastagBalanceINR));
         }
 
         public void ArriveAtDestination()
         {
-            currentPhase = GamePhase.DestinationArrival;
-            Debug.Log("[BUSSIGO] Bus arrived at Hyderabad MGBS Platform 12. Ready for passenger alighting.");
+            StateMachine.ChangeState(GamePhase.DestinationArrival);
         }
 
         public void CompleteTrip()
         {
+            int netProfit = earnedRevenueINR - 135;
+            int driverXP = 850;
             boardedPassengers = 0;
-            currentPhase = GamePhase.TripSummary;
-            Debug.Log($"[BUSSIGO] Trip completed successfully! Final Profit: ₹{earnedRevenueINR - 135}.");
+            StateMachine.ChangeState(GamePhase.TripSummary);
+            EventBus.Publish(new TripCompletedEvent("Hyderabad MGBS Platform 12", earnedRevenueINR, netProfit, driverXP));
         }
     }
 }
