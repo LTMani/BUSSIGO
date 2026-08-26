@@ -1,27 +1,27 @@
 # BUSSIGO - Verified Source Code & LOC Audit Report
 
 **Audit Status**: PASSED (>= 70,000 LOC)
-**Verified Genuine C# Source LOC**: `77,485`
-**Total Genuine Code LOC (All Languages)**: `82,726`
+**Verified Genuine C# Source LOC**: `78,108`
+**Total Genuine Code LOC (All Languages)**: `83,715`
 
 ## Language Breakdown
 
 | Language | Files | Code Lines | Comments | Blank Lines | Total Lines |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **C#** | 2,566 | 77,485 | 868 | 9,979 | 88,332 |
-| **Python (Tools)** | 27 | 4,536 | 3,413 | 1,297 | 9,246 |
-| **Markdown (Docs/Design)** | 10 | 615 | 0 | 148 | 763 |
+| **C#** | 2,577 | 78,108 | 920 | 10,101 | 89,129 |
+| **Python (Tools)** | 31 | 4,901 | 3,469 | 1,377 | 9,747 |
+| **Markdown (Docs/Design)** | 10 | 616 | 0 | 148 | 764 |
 | **JSON (Data/Config)** | 3 | 90 | 0 | 0 | 90 |
 
 ## Module & Subsystem Breakdown
 
 | Subsystem Module | Files | Code Lines | Comments | Blank Lines | Total Lines |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `Assets/Tests/EditMode` | 387 | 14,464 | 1 | 1,541 | 16,006 |
+| `Assets/Tests/EditMode` | 389 | 14,575 | 11 | 1,568 | 16,154 |
 | `Assets/Game/UI` | 354 | 8,102 | 30 | 952 | 9,084 |
 | `Assets/Game/Routes` | 163 | 6,347 | 13 | 669 | 7,029 |
 | `Assets/Game/World` | 161 | 4,913 | 70 | 718 | 5,701 |
-| `Assets/Tools` | 25 | 4,512 | 3,403 | 1,288 | 9,203 |
+| `Assets/Tools` | 29 | 4,877 | 3,459 | 1,368 | 9,704 |
 | `Assets/Game/Economy` | 118 | 4,147 | 6 | 547 | 4,700 |
 | `Assets/Game/Passengers` | 102 | 3,909 | 1 | 509 | 4,419 |
 | `Assets/Game/VehiclePhysics` | 133 | 3,455 | 128 | 563 | 4,146 |
@@ -45,13 +45,13 @@
 | `Assets/Game/SaveSystem` | 31 | 512 | 0 | 63 | 575 |
 | `Assets/Tests/PlayMode` | 21 | 507 | 2 | 63 | 572 |
 | `Assets/Game/Input` | 21 | 477 | 0 | 86 | 563 |
-| `Docs` | 9 | 463 | 0 | 101 | 564 |
+| `Docs` | 9 | 464 | 0 | 101 | 565 |
 | `Assets/Game/Localization` | 22 | 448 | 1 | 49 | 498 |
+| `Assets/Bussigo/Vehicle` | 7 | 432 | 42 | 85 | 559 |
 | `Assets/Bussigo/Core` | 9 | 380 | 22 | 63 | 465 |
+| `Assets/Bussigo/Physics` | 6 | 240 | 3 | 35 | 278 |
 | `Root` | 5 | 232 | 10 | 56 | 298 |
 | `Assets/Editor` | 2 | 129 | 2 | 19 | 150 |
-| `Assets/Bussigo/Vehicle` | 1 | 81 | 3 | 15 | 99 |
-| `Assets/Bussigo/Physics` | 3 | 79 | 0 | 10 | 89 |
 | `Assets/Bussigo/Route` | 2 | 72 | 0 | 8 | 80 |
 | `Assets/Bussigo/Passengers` | 1 | 67 | 2 | 5 | 74 |
 | `Assets/Bussigo/Audio` | 1 | 46 | 2 | 6 | 54 |
