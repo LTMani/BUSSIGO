@@ -34,7 +34,7 @@ namespace Bussigo.Game.Runtime3D.Gameplay
         private void InitializeGameServices()
         {
             companyFinancialLedger = new FinancialLedger();
-            companyFinancialLedger.RecordTransaction(TransactionType.TicketRevenue, 500000.0, "Initial Company Founding Capital");
+            companyFinancialLedger.RecordTransaction(TransactionType.TicketRevenue, 500000f, "Initial Company Founding Capital");
             
             Application.targetFrameRate = 60;
             QualitySettings.vSyncCount = 1;

@@ -53,7 +53,7 @@ namespace Bussigo.Game.Runtime3D.Traffic
             bool hasObstacleAhead = false;
 
             RaycastHit hit;
-            if (Physics.Raycast(transform.position + Vector3.up * 1.0f, transform.forward, out hit, forwardRaycastDistance, obstacleLayerMask))
+            if (UnityEngine.Physics.Raycast(transform.position + Vector3.up * 1.0f, transform.forward, out hit, forwardRaycastDistance, obstacleLayerMask))
             {
                 if (hit.collider.gameObject != gameObject)
                 {
