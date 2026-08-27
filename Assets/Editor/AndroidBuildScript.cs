@@ -41,10 +41,10 @@ namespace Bussigo.Editor
             Debug.Log($"[BUSSIGO Android Build] Starting {(isDevelopment ? "Development" : "Release")} APK build to: {targetApkPath}");
 
             // Configure Player Settings for Android
-            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.bussigo.southindiatravels");
+            PlayerSettings.SetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android, "com.bussigo.southindiatravels");
             PlayerSettings.bundleVersion = "1.0.0";
             PlayerSettings.Android.bundleVersionCode = 1;
-            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel34;
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;

@@ -360,7 +360,7 @@ namespace Bussigo.Core
 
             Mesh boxMesh = new Mesh();
             boxMesh.name = "LED_Board_Mesh";
-            float w = 1.6f, h = 0.26f, d = 0.05f;
+            float w = 1.6f, h = 0.26f;
             boxMesh.vertices = new Vector3[]
             {
                 new Vector3(-w*0.5f, -h*0.5f, 0), new Vector3(w*0.5f, -h*0.5f, 0),
