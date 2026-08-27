@@ -20,6 +20,14 @@ namespace Bussigo.World
         public float distanceFromOriginMeters;
         public float lateralOffsetMeters;
         public string labelText;
+
+        public RoadsidePlacement(InfrastructureItemType itemType, float distanceFromOriginMeters, float lateralOffsetMeters, string labelText)
+        {
+            this.itemType = itemType;
+            this.distanceFromOriginMeters = distanceFromOriginMeters;
+            this.lateralOffsetMeters = lateralOffsetMeters;
+            this.labelText = labelText;
+        }
     }
 
     /// <summary>
@@ -48,10 +56,34 @@ namespace Bussigo.World
             }
 
             // 2. Major Destination Overhead Gantries
-            placements.Add(new RoadsidePlacement { itemType = InfrastructureItemType.OverheadHighwayGantry, distanceFromOriginMeters: 4000f, lateralOffsetMeters: 0f, labelText: "WELCOME TO NH65 - HYDERABAD 271 KM" });
-            placements.Add(new RoadsidePlacement { itemType = InfrastructureItemType.OverheadHighwayGantry, distanceFromOriginMeters: 32000f, lateralOffsetMeters: 0f, labelText: "TOLL PLAZA 800M - FASTAG LANES" });
-            placements.Add(new RoadsidePlacement { itemType = InfrastructureItemType.OverheadHighwayGantry, distanceFromOriginMeters: 135000f, lateralOffsetMeters: 0f, labelText: "SURYAPET REST AREA & FOOD HUB - 1.4 KM" });
-            placements.Add(new RoadsidePlacement { itemType = InfrastructureItemType.OverheadHighwayGantry, distanceFromOriginMeters: 255000f, lateralOffsetMeters: 0f, labelText: "HYDERABAD OUTER RING ROAD (ORR) EXIT" });
+            placements.Add(new RoadsidePlacement
+            {
+                itemType = InfrastructureItemType.OverheadHighwayGantry,
+                distanceFromOriginMeters = 4000f,
+                lateralOffsetMeters = 0f,
+                labelText = "WELCOME TO NH65 - HYDERABAD 271 KM"
+            });
+            placements.Add(new RoadsidePlacement
+            {
+                itemType = InfrastructureItemType.OverheadHighwayGantry,
+                distanceFromOriginMeters = 32000f,
+                lateralOffsetMeters = 0f,
+                labelText = "TOLL PLAZA 800M - FASTAG LANES"
+            });
+            placements.Add(new RoadsidePlacement
+            {
+                itemType = InfrastructureItemType.OverheadHighwayGantry,
+                distanceFromOriginMeters = 135000f,
+                lateralOffsetMeters = 0f,
+                labelText = "SURYAPET REST AREA & FOOD HUB - 1.4 KM"
+            });
+            placements.Add(new RoadsidePlacement
+            {
+                itemType = InfrastructureItemType.OverheadHighwayGantry,
+                distanceFromOriginMeters = 255000f,
+                lateralOffsetMeters = 0f,
+                labelText = "HYDERABAD OUTER RING ROAD (ORR) EXIT"
+            });
         }
     }
 }
