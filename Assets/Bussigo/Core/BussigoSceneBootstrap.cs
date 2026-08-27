@@ -280,16 +280,30 @@ namespace Bussigo.Core
                 bodyMat.SetFloat("_Glossiness", 0.88f);
                 bodyMat.SetFloat("_Metallic", 0.35f);
 
-                string texPath = Path.Combine(Application.dataPath, "Bussigo/Assets/Textures/Coach_Livery_Albedo_2K.png");
-                if (File.Exists(texPath))
+                Texture2D LoadTex(string filename)
                 {
-                    byte[] texBytes = File.ReadAllBytes(texPath);
-                    Texture2D albedoTex = new Texture2D(2048, 2048, TextureFormat.RGBA32, true);
-                    if (albedoTex.LoadImage(texBytes))
+                    string p = Path.Combine(Application.dataPath, "Bussigo/Assets/Textures", filename);
+                    if (File.Exists(p))
                     {
-                        bodyMat.mainTexture = albedoTex;
-                        bodyMat.color = Color.white;
+                        byte[] b = File.ReadAllBytes(p);
+                        Texture2D t = new Texture2D(2048, 2048, TextureFormat.RGBA32, true);
+                        if (t.LoadImage(b)) return t;
                     }
+                    return null;
+                }
+
+                Texture2D albedoTex = LoadTex("Coach_Livery_Albedo_2K.png");
+                if (albedoTex != null)
+                {
+                    bodyMat.mainTexture = albedoTex;
+                    bodyMat.color = Color.white;
+                }
+
+                Texture2D normalTex = LoadTex("Coach_Livery_Normal_2K.png");
+                if (normalTex != null)
+                {
+                    bodyMat.EnableKeyword("_NORMALMAP");
+                    bodyMat.SetTexture("_BumpMap", normalTex);
                 }
 
                 Material glassMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
@@ -298,20 +312,29 @@ namespace Bussigo.Core
                 glassMat.SetFloat("_Glossiness", 0.96f);
                 glassMat.SetFloat("_Metallic", 0.20f);
 
-                Material skirtingMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
-                skirtingMat.name = "Coach_LowerSkirting_PBR";
-                skirtingMat.color = new Color(0.15f, 0.15f, 0.16f);
-                skirtingMat.SetFloat("_Glossiness", 0.40f);
-
-                Material roofMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
-                roofMat.name = "Coach_RoofAC_PBR";
-                roofMat.color = new Color(0.88f, 0.88f, 0.90f);
-                roofMat.SetFloat("_Glossiness", 0.70f);
-
                 Material wheelMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
-                wheelMat.name = "Coach_WheelRubberRim_PBR";
-                wheelMat.color = new Color(0.12f, 0.12f, 0.12f);
-                wheelMat.SetFloat("_Glossiness", 0.35f);
+                wheelMat.name = "Coach_WheelRimTire_PBR";
+                wheelMat.color = Color.white;
+                wheelMat.SetFloat("_Glossiness", 0.55f);
+                Texture2D wheelTex = LoadTex("Wheel_Rim_Tire_2K.png");
+                if (wheelTex != null) wheelMat.mainTexture = wheelTex;
+                else wheelMat.color = new Color(0.15f, 0.15f, 0.16f);
+
+                Material dashMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
+                dashMat.name = "Cockpit_Dashboard_PBR";
+                dashMat.color = Color.white;
+                dashMat.SetFloat("_Glossiness", 0.40f);
+                Texture2D dashTex = LoadTex("Cockpit_Dashboard_Cluster_2K.png");
+                if (dashTex != null) dashMat.mainTexture = dashTex;
+                else dashMat.color = new Color(0.20f, 0.20f, 0.22f);
+
+                Material seatMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
+                seatMat.name = "Passenger_SeatVelvet_PBR";
+                seatMat.color = Color.white;
+                seatMat.SetFloat("_Glossiness", 0.20f);
+                Texture2D seatTex = LoadTex("Seating_Velvet_Albedo_2K.png");
+                if (seatTex != null) seatMat.mainTexture = seatTex;
+                else seatMat.color = new Color(0.18f, 0.22f, 0.35f);
 
                 // Load Complete Multi-Material OBJ Hierarchy
                 string objPath = Path.Combine(Application.dataPath, "Bussigo/Assets/Models/Bus/IndianIntercityCoach_12M_Hero_LOD0.obj");
@@ -320,7 +343,7 @@ namespace Bussigo.Core
                     objPath = Path.Combine(Application.dataPath, "Bussigo/Assets/Models/Bus/IndianIntercityCoach_12M.obj");
                 }
 
-                ObjMeshLoader.LoadObjHierarchy(objPath, exterior, bodyMat, glassMat, skirtingMat, roofMat, wheelMat);
+                ObjMeshLoader.LoadObjHierarchy(objPath, exterior, bodyMat, glassMat, wheelMat, dashMat, seatMat);
 
                 // Front Projector Headlights
                 CreateProjectorHeadlight(exterior, new Vector3(-0.95f, 0.85f, 6.25f));
@@ -517,7 +540,7 @@ namespace Bussigo.Core
                 return mount;
             }
 
-            rig.cameraMountChase = FindOrCreateMount(cameraMounts, "Mount_ExteriorChase", new Vector3(0f, 3.6f, -13.5f), Quaternion.Euler(10.5f, 0f, 0f));
+            rig.cameraMountChase = FindOrCreateMount(cameraMounts, "Mount_ExteriorChase", new Vector3(0f, 3.4f, -12.5f), Quaternion.Euler(9.5f, 0f, 0f));
             rig.cameraMountBumper = FindOrCreateMount(cameraMounts, "Mount_FrontBumper", new Vector3(0f, 0.85f, 6.45f), Quaternion.identity);
             rig.cameraMountCockpitDriverEye = FindOrCreateMount(cameraMounts, "Mount_DriverEye", new Vector3(-0.60f, 2.15f, 4.75f), Quaternion.identity);
             rig.cameraMountPassengerCabin = FindOrCreateMount(cameraMounts, "Mount_PassengerCabin", new Vector3(0f, 2.35f, 1.20f), Quaternion.identity);

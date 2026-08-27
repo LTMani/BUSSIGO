@@ -94,11 +94,11 @@ namespace Bussigo.World
                 }
             }
 
-            // 3. Grounded Vijayawada PNBS Platform Curb (Right side beside Lane 1)
-            Mesh curbPlatformMesh = BuildExtrudedBoxMesh(3.5f, 0.25f, 50.0f);
-            GameObject platformGo = CreateMeshGameObject("PNBS_TerminalPlatform_Bay4", curbPlatformMesh, platformMat, parent, new Vector3(9.8f, 0.125f, 0f), Quaternion.identity, true);
+            // 3. Grounded Vijayawada PNBS Platform Curb (Right side beside Lane 1, starts forward of bus door)
+            Mesh curbPlatformMesh = BuildExtrudedBoxMesh(3.5f, 0.25f, 36.0f);
+            GameObject platformGo = CreateMeshGameObject("PNBS_TerminalPlatform_Bay4", curbPlatformMesh, platformMat, parent, new Vector3(9.8f, 0.125f, 16.0f), Quaternion.identity, true);
 
-            // Platform Shelter with proper vertical support columns (grounded, not floating)
+            // Platform Shelter with proper vertical support columns (grounded, starts forward of bus door)
             BuildPlatformShelter(platformGo.transform, steelMat, medianMat);
 
             // 4. Highway Streetlights along right shoulder every 60m
@@ -115,8 +115,8 @@ namespace Bussigo.World
                 CreatePalmTree(parent, new Vector3(12.5f, 0f, tz + 25f));
             }
 
-            // 6. Overhead NH65 Highway Gantries with Green Signboards
-            CreateOverheadGantry(parent, 120f, "NH 65: HYDERABAD 271 KM | SURYAPET 136 KM | KODAD 89 KM", steelMat, signBoardMat);
+            // 6. Overhead NH65 Highway Gantries with Green Signboards (Placed safely forward at 160m and 800m)
+            CreateOverheadGantry(parent, 160f, "NH 65: HYDERABAD 271 KM | SURYAPET 136 KM | KODAD 89 KM", steelMat, signBoardMat);
             CreateOverheadGantry(parent, 800f, "KANCHIKACHERLA FASTAG TOLL PLAZA 32 KM -- ALL LANES ELECTRONIC", steelMat, signBoardMat);
         }
 
@@ -127,13 +127,13 @@ namespace Bussigo.World
             shelter.transform.localPosition = Vector3.zero;
 
             Mesh colMesh = BuildExtrudedBoxMesh(0.15f, 3.2f, 0.15f);
-            Mesh roofMesh = BuildExtrudedBoxMesh(3.2f, 0.12f, 36.0f);
+            Mesh roofMesh = BuildExtrudedBoxMesh(3.2f, 0.12f, 24.0f);
 
             // 4 Support Pillars
-            CreateMeshGameObject("Pillar_1", colMesh, steelMat, shelter.transform, new Vector3(0f, 1.6f, -14f), Quaternion.identity, true);
-            CreateMeshGameObject("Pillar_2", colMesh, steelMat, shelter.transform, new Vector3(0f, 1.6f, -4.5f), Quaternion.identity, true);
-            CreateMeshGameObject("Pillar_3", colMesh, steelMat, shelter.transform, new Vector3(0f, 1.6f, 4.5f), Quaternion.identity, true);
-            CreateMeshGameObject("Pillar_4", colMesh, steelMat, shelter.transform, new Vector3(0f, 1.6f, 14f), Quaternion.identity, true);
+            CreateMeshGameObject("Pillar_1", colMesh, steelMat, shelter.transform, new Vector3(0f, 1.6f, -9f), Quaternion.identity, true);
+            CreateMeshGameObject("Pillar_2", colMesh, steelMat, shelter.transform, new Vector3(0f, 1.6f, -3f), Quaternion.identity, true);
+            CreateMeshGameObject("Pillar_3", colMesh, steelMat, shelter.transform, new Vector3(0f, 1.6f, 3f), Quaternion.identity, true);
+            CreateMeshGameObject("Pillar_4", colMesh, steelMat, shelter.transform, new Vector3(0f, 1.6f, 9f), Quaternion.identity, true);
 
             // Grounded Curved Canopy Roof
             CreateMeshGameObject("ShelterRoof", roofMesh, roofMat, shelter.transform, new Vector3(0f, 3.25f, 0f), Quaternion.identity, false);

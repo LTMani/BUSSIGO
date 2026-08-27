@@ -8,7 +8,7 @@ namespace Bussigo.Vehicle
 {
     /// <summary>
     /// Multi-material runtime OBJ parser that instantiates distinct visual sub-assemblies
-    /// (Body, Tinted Glass, Skirting, Roof AC, Wheels) with accurate PBR materials and normals.
+    /// (Exterior Body, Windshield, Wheels, Dashboard, 44 Passenger Seats) with accurate PBR materials and normals.
     /// </summary>
     public static class ObjMeshLoader
     {
@@ -21,7 +21,7 @@ namespace Bussigo.Vehicle
             public List<int> triangles = new List<int>();
         }
 
-        public static GameObject LoadObjHierarchy(string filePath, Transform parent, Material bodyMat, Material glassMat, Material skirtingMat, Material roofMat, Material wheelMat)
+        public static GameObject LoadObjHierarchy(string filePath, Transform parent, Material bodyMat, Material glassMat, Material wheelMat, Material dashMat, Material seatMat)
         {
             if (!File.Exists(filePath))
             {
@@ -45,7 +45,7 @@ namespace Bussigo.Vehicle
                 }
             }
 
-            EnsureSubMesh("Exterior_Body_Crimson");
+            EnsureSubMesh("Exterior_Body");
 
             string[] lines = File.ReadAllLines(filePath);
             foreach (string line in lines)
@@ -109,6 +109,10 @@ namespace Bussigo.Vehicle
 
                 Mesh mesh = new Mesh();
                 mesh.name = sm.groupName;
+                if (sm.vertices.Count > 65000)
+                {
+                    mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+                }
                 mesh.SetVertices(sm.vertices);
                 if (sm.normals.Count == sm.vertices.Count && sm.normals.Count > 0)
                 {
@@ -138,10 +142,22 @@ namespace Bussigo.Vehicle
                 Material chosenMat = bodyMat;
 
                 string gn = sm.groupName.ToLowerInvariant();
-                if (gn.Contains("glass") || gn.Contains("window")) chosenMat = glassMat;
-                else if (gn.Contains("skirt") || gn.Contains("chassis")) chosenMat = skirtingMat;
-                else if (gn.Contains("roof") || gn.Contains("ac")) chosenMat = roofMat;
-                else if (gn.Contains("wheel") || gn.Contains("tire")) chosenMat = wheelMat;
+                if (gn.Contains("windshield") || gn.Contains("glass") || gn.Contains("window"))
+                {
+                    chosenMat = glassMat;
+                }
+                else if (gn.Contains("wheel") || gn.Contains("tire"))
+                {
+                    chosenMat = wheelMat;
+                }
+                else if (gn.Contains("dashboard") || gn.Contains("steering"))
+                {
+                    chosenMat = dashMat;
+                }
+                else if (gn.Contains("seat"))
+                {
+                    chosenMat = seatMat;
+                }
 
                 mr.sharedMaterial = chosenMat;
             }
