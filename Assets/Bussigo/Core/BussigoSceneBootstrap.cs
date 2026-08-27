@@ -12,8 +12,7 @@ using Bussigo.Company;
 using Bussigo.Save;
 using Bussigo.UI;
 using Bussigo.World;
-using Bussigo.Game.Runtime3D.Vehicle;
-using Bussigo.Game.Runtime3D.Environment;
+using Bussigo.InputSystem;
 
 namespace Bussigo.Core
 {
@@ -120,6 +119,7 @@ namespace Bussigo.Core
 
             // Unity Component road streamer
             if (roadStreamer == null) roadStreamer = FindOrCreate<RoadSegmentStreamer>("[ROAD_NETWORK]");
+            if (roadStreamer != null) roadStreamer.Initialize(routeGraph);
         }
 
         private void EnsureWorldEnvironment()
@@ -131,15 +131,6 @@ namespace Bussigo.Core
             timeOfDayService.Initialize();
             weatherManager.Initialize();
             roadsideManager.InitializeCorridorInfrastructure();
-
-            // Ensure 3D Highway Corridor, Terminals, and Roadside Scenery exist
-            var worldGo = GameObject.Find("[WORLD_ENVIRONMENT]");
-            if (worldGo != null && GameObject.Find("HighwayCorridor_NH65") == null)
-            {
-                var worldBuilder = worldGo.GetComponent<ProceduralSouthIndiaWorldBuilder>();
-                if (worldBuilder == null) worldBuilder = worldGo.AddComponent<ProceduralSouthIndiaWorldBuilder>();
-                worldBuilder.GenerateWorld(worldGo.transform);
-            }
         }
 
         private void EnsureLogisticsAndTraffic()
@@ -176,23 +167,10 @@ namespace Bussigo.Core
             cockpitController = GetOrAdd<BusCockpitController>(heroBusInstance);
             doorActuator = GetOrAdd<BusDoorActuator>(heroBusInstance);
             cameraRig = GetOrAdd<BusCameraRig>(heroBusInstance);
-            GetOrAdd<Bussigo.InputSystem.UnifiedInputManager>(heroBusInstance).targetBus = chassisController;
+            GetOrAdd<UnifiedInputManager>(heroBusInstance).targetBus = chassisController;
 
             // Ensure rig hierarchy transforms (camera mounts, wheels, steering wheel, glider door)
             EnsureRigHierarchyTransforms(heroBusInstance, rigHierarchy);
-
-            // Ensure 3D Visual Mesh is attached if not already present
-            if (heroBusInstance.GetComponentInChildren<MeshRenderer>() == null)
-            {
-                var meshBuilder = heroBusInstance.AddComponent<ProceduralBusMeshBuilder>();
-                var visualModel = meshBuilder.BuildProceduralBus(heroBusInstance.transform.position, heroBusInstance.transform.rotation, BusCategoryType.SuperLuxuryRecliner);
-                visualModel.transform.SetParent(heroBusInstance.transform, true);
-                visualModel.name = "HeroBusVisualModel";
-                var childRb = visualModel.GetComponent<Rigidbody>();
-                if (childRb != null) Destroy(childRb);
-                var childCtrl = visualModel.GetComponent<UnityBusController3D>();
-                if (childCtrl != null) Destroy(childCtrl);
-            }
 
             // Connect vehicle component references
             wheelSync.chassisController = chassisController;
