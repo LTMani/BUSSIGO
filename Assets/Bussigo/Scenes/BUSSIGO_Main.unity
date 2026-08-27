@@ -261,8 +261,6 @@ GameObject:
   - component: {fileID: 2002}
   - component: {fileID: 2003}
   - component: {fileID: 2004}
-  - component: {fileID: 2005}
-  - component: {fileID: 2006}
   m_Layer: 0
   m_Name: [CORE_SERVICES]
   m_TagString: Untagged
@@ -291,7 +289,7 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2000}
   m_Enabled: 1
-  m_Script: {fileID: 11500000, guid: 120373e5973bf9240a7407e18487b1e3, type: 3}
+  m_Script: {fileID: 11500000, guid: da97fc460ac729544ac63105c7e8bd86, type: 3}
 --- !u!114 &2003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,7 +298,7 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2000}
   m_Enabled: 1
-  m_Script: {fileID: 11500000, guid: bb1a1a4f7eca2094aa5e1760058eaf37, type: 3}
+  m_Script: {fileID: 11500000, guid: ebbbc0d320003844ea9ff4e7fd6047ee, type: 3}
 --- !u!114 &2004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,25 +307,7 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2000}
   m_Enabled: 1
-  m_Script: {fileID: 11500000, guid: 651c7c7a33ddcf6498d0197deab19927, type: 3}
---- !u!114 &2005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2000}
-  m_Enabled: 1
-  m_Script: {fileID: 11500000, guid: da97fc460ac729544ac63105c7e8bd86, type: 3}
---- !u!114 &2006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2000}
-  m_Enabled: 1
-  m_Script: {fileID: 11500000, guid: ebbbc0d320003844ea9ff4e7fd6047ee, type: 3}
+  m_Script: {fileID: 11500000, guid: 436b9e37f6f7b6c49b54897814097510, type: 3}
 
 --- !u!1 &3000
 GameObject:
@@ -401,7 +381,6 @@ GameObject:
   - component: {fileID: 4002}
   - component: {fileID: 4003}
   - component: {fileID: 4004}
-  - component: {fileID: 4005}
   m_Layer: 0
   m_Name: [ROAD_NETWORK]
   m_TagString: Untagged
@@ -430,7 +409,7 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4000}
   m_Enabled: 1
-  m_Script: {fileID: 11500000, guid: edc0d678aab06bd418c4b98d5dfe57b6, type: 3}
+  m_Script: {fileID: 11500000, guid: 056ce71af7855e3478040da3089143c9, type: 3}
 --- !u!114 &4003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -439,17 +418,8 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4000}
   m_Enabled: 1
-  m_Script: {fileID: 11500000, guid: 056ce71af7855e3478040da3089143c9, type: 3}
---- !u!114 &4004
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4000}
-  m_Enabled: 1
   m_Script: {fileID: 11500000, guid: b020ce2e0c8a80d479ad673ca6ec7b51, type: 3}
---- !u!114 &4005
+--- !u!114 &4004
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

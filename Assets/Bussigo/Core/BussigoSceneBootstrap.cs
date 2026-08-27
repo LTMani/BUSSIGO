@@ -24,9 +24,6 @@ namespace Bussigo.Core
     public class BussigoSceneBootstrap : MonoBehaviour
     {
         [Header("Root Systems & Services")]
-        public ServiceLocator serviceLocator;
-        public EventBus eventBus;
-        public GameStateMachine gameStateMachine;
         public EconomyManager economyManager;
         public CompanyManager companyManager;
         public SaveSystem saveSystem;
@@ -37,16 +34,17 @@ namespace Bussigo.Core
         public RoadsideInfrastructureManager roadsideManager;
 
         [Header("Route & Highway Network")]
-        public NH65HighwayNetworkBuilder highwayBuilder;
         public RouteGraph routeGraph;
         public RouteDistanceService distanceService;
         public RoadSegmentStreamer roadStreamer;
 
         [Header("Traffic AI & Simulation")]
         public TrafficManager trafficManager;
+        public TrafficSpawner trafficSpawner;
 
         [Header("Passenger Logistics")]
         public PassengerManager passengerManager;
+        public BoardingManager boardingManager;
 
         [Header("Audio System")]
         public BusAudioMixerController audioMixer;
@@ -82,16 +80,17 @@ namespace Bussigo.Core
 
         private void EnsureCoreServices()
         {
-            if (serviceLocator == null) serviceLocator = FindOrCreate<ServiceLocator>("[SERVICE_LOCATOR]");
-            if (eventBus == null) eventBus = FindOrCreate<EventBus>("[EVENT_BUS]");
-            if (gameStateMachine == null) gameStateMachine = FindOrCreate<GameStateMachine>("[GAME_STATE_MACHINE]");
-            if (economyManager == null) economyManager = FindOrCreate<EconomyManager>("[ECONOMY_MANAGER]");
-            if (companyManager == null) companyManager = FindOrCreate<CompanyManager>("[COMPANY_MANAGER]");
-            if (saveSystem == null) saveSystem = FindOrCreate<SaveSystem>("[SAVE_SYSTEM]");
+            if (economyManager == null) economyManager = FindOrCreate<EconomyManager>("[CORE_SERVICES]");
+            if (companyManager == null) companyManager = FindOrCreate<CompanyManager>("[CORE_SERVICES]");
+            if (saveSystem == null) saveSystem = FindOrCreate<SaveSystem>("[CORE_SERVICES]");
 
             economyManager.Initialize();
             companyManager.Initialize();
             saveSystem.Initialize();
+
+            ServiceLocator.Register<EconomyManager>(economyManager);
+            ServiceLocator.Register<CompanyManager>(companyManager);
+            ServiceLocator.Register<SaveSystem>(saveSystem);
         }
 
         private void EnsureWorldAndRoute()
@@ -100,19 +99,22 @@ namespace Bussigo.Core
             if (weatherManager == null) weatherManager = FindOrCreate<DynamicWeatherManager>("[WORLD_ENVIRONMENT]");
             if (roadsideManager == null) roadsideManager = FindOrCreate<RoadsideInfrastructureManager>("[WORLD_ENVIRONMENT]");
 
-            if (highwayBuilder == null) highwayBuilder = FindOrCreate<NH65HighwayNetworkBuilder>("[ROAD_NETWORK]");
             if (routeGraph == null) routeGraph = FindOrCreate<RouteGraph>("[ROAD_NETWORK]");
             if (distanceService == null) distanceService = FindOrCreate<RouteDistanceService>("[ROAD_NETWORK]");
             if (roadStreamer == null) roadStreamer = FindOrCreate<RoadSegmentStreamer>("[ROAD_NETWORK]");
 
             if (trafficManager == null) trafficManager = FindOrCreate<TrafficManager>("[TRAFFIC_SIMULATION]");
+            if (trafficSpawner == null) trafficSpawner = FindOrCreate<TrafficSpawner>("[TRAFFIC_SIMULATION]");
+
             if (passengerManager == null) passengerManager = FindOrCreate<PassengerManager>("[PASSENGER_SYSTEM]");
+            if (boardingManager == null) boardingManager = FindOrCreate<BoardingManager>("[PASSENGER_SYSTEM]");
 
             timeOfDayService.Initialize();
             weatherManager.Initialize();
             roadsideManager.InitializeCorridorInfrastructure();
 
-            highwayBuilder.InitializeNetwork();
+            // Populate RouteGraph via static NH65 Highway Builder
+            routeGraph = NH65HighwayNetworkBuilder.BuildCorridorGraph();
             distanceService.Initialize();
             trafficManager.Initialize();
             passengerManager.Initialize();
@@ -146,8 +148,9 @@ namespace Bussigo.Core
             // Connect vehicle references
             chassisController.physicsModel = physicsModel;
             chassisController.doorActuator = doorActuator;
-            wheelSync.chassis = chassisController;
-            cockpitController.chassis = chassisController;
+            wheelSync.chassisController = chassisController;
+            cockpitController.chassisController = chassisController;
+            doorActuator.chassisController = chassisController;
             cameraRig.targetBus = heroBusInstance.transform;
             cameraRig.chassis = chassisController;
         }
