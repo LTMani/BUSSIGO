@@ -5,6 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - m_Path: Assets/Bussigo/Scenes/BUSSIGO_Main.unity
+    m_Guid: 00112233445566778899aabbccddeeff
+    m_Enabled: 1
   - m_Path: Assets/Scenes/MainMenu.unity
     m_Guid: 01020304050607080910111213141516
     m_Enabled: 1

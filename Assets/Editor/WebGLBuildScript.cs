@@ -12,6 +12,7 @@ namespace Bussigo.Editor
     {
         private static readonly string[] BuildScenes = new string[]
         {
+            "Assets/Bussigo/Scenes/BUSSIGO_Main.unity",
             "Assets/Scenes/MainMenu.unity",
             "Assets/Scenes/VijayawadaHyderabadPlayableRoute.unity"
         };
