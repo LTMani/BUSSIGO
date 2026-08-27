@@ -28,8 +28,7 @@ namespace Bussigo.Audio
         {
             if (chassisController == null) return;
 
-            float brakeInput = Input.GetAxis("Vertical") < 0 ? -Input.GetAxis("Vertical") : 0f;
-            if (Input.GetKey(KeyCode.Space)) brakeInput = 1.0f;
+            float brakeInput = chassisController.BrakeInput;
 
             // 1. Air Brake Purge (Triggers on Brake Release)
             if (wasBraking && brakeInput < 0.05f && airPurgeSource != null)

@@ -22,8 +22,13 @@ namespace Bussigo.Economy
 
         public double CurrentBalance => ledger.currentBalanceRupees;
 
+        private bool isInitialized = false;
+
         public void Initialize()
         {
+            if (isInitialized) return;
+            isInitialized = true;
+
             ServiceLocator.Register<EconomyManager>(this);
             Debug.Log("[BUSSIGO] EconomyManager initialized with Double-Entry Ledger.");
         }

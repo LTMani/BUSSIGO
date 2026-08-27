@@ -17,8 +17,13 @@ namespace Bussigo.Save
         public const string CURRENT_SCHEMA_VERSION = "2.0.0";
         private string saveFilePath;
 
+        private bool isInitialized = false;
+
         public void Initialize()
         {
+            if (isInitialized) return;
+            isInitialized = true;
+
             saveFilePath = Path.Combine(Application.persistentDataPath, "BUSSIGO_Save_v2.json");
             ServiceLocator.Register<SaveSystem>(this);
             Debug.Log($"[BUSSIGO Save] Initialized. Save file path: {saveFilePath}");

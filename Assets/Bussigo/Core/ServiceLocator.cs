@@ -12,9 +12,11 @@ namespace Bussigo.Core
 
         public static void Register<T>(T service) where T : class, IService
         {
+            if (service == null) return;
             Type type = typeof(T);
             if (services.ContainsKey(type))
             {
+                if (ReferenceEquals(services[type], service)) return;
                 services[type].Shutdown();
                 services[type] = service;
             }
@@ -22,7 +24,6 @@ namespace Bussigo.Core
             {
                 services.Add(type, service);
             }
-            service.Initialize();
         }
 
         public static T Get<T>() where T : class, IService

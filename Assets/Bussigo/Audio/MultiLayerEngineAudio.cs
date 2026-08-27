@@ -30,7 +30,7 @@ namespace Bussigo.Audio
             if (chassisController == null) return;
 
             float currentRpm = chassisController.currentEngineRpm;
-            float throttle = Input.GetAxis("Vertical") > 0 ? Input.GetAxis("Vertical") : 0f;
+            float throttle = chassisController.ThrottleInput;
             float perspectiveMult = mixerController != null ? mixerController.GetPerspectiveEngineMultiplier() : 1.0f;
             float baseVol = (mixerController != null ? mixerController.busEngineVolume : 0.8f) * perspectiveMult;
 
