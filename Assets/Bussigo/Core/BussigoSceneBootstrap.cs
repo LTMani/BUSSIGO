@@ -19,8 +19,8 @@ namespace Bussigo.Core
 {
     /// <summary>
     /// Master Scene Bootstrapper for BUSSIGO V2.
-    /// Orchestrates service initialization, pure C# domain services, Hero Bus instantiation, highway network streaming,
-    /// traffic AI, dynamic weather, 44-seat passenger queues, audio mixer, and simulator HUD on scene launch.
+    /// Orchestrates service initialization, pure C# domain services, multi-material Hero Bus instantiation,
+    /// highway network streaming, roadside infrastructure, atmospheric lighting, audio mixer, and simulator HUD on scene launch.
     /// </summary>
     public class BussigoSceneBootstrap : MonoBehaviour
     {
@@ -78,7 +78,7 @@ namespace Bussigo.Core
             // 2. Pure C# Route Graph & Distance Service
             EnsureRouteNetwork();
 
-            // 3. World & Environment
+            // 3. World & Atmospheric Environment
             EnsureWorldEnvironment();
 
             // 4. Passenger Logistics & Traffic AI
@@ -136,11 +136,59 @@ namespace Bussigo.Core
             weatherManager.Initialize();
             roadsideManager.InitializeCorridorInfrastructure();
 
+            // Configure Lighting and Skybox
+            ConfigureAtmosphericLighting();
+
             // Instantiate NH65 Highway Corridor, Lane Markings, Dividers, Guardrails, and PNBS Terminal Platform
             if (worldGo.transform.Find("PNBS_TerminalPlatform_Bay4") == null)
             {
                 HighwayRoadMeshGenerator.GenerateCorridorGeometry(worldGo.transform, routeGraph, roadStreamer);
             }
+        }
+
+        private void ConfigureAtmosphericLighting()
+        {
+            // 1. Procedural Skybox
+            Shader skyboxShader = Shader.Find("Skybox/Procedural");
+            if (skyboxShader != null)
+            {
+                Material skyMat = new Material(skyboxShader);
+                skyMat.SetFloat("_SunDisk", 2);
+                skyMat.SetFloat("_SunSize", 0.04f);
+                skyMat.SetFloat("_AtmosphereThickness", 1.05f);
+                skyMat.SetColor("_SkyTint", new Color(0.48f, 0.65f, 0.85f));
+                skyMat.SetColor("_GroundColor", new Color(0.35f, 0.32f, 0.28f));
+                RenderSettings.skybox = skyMat;
+            }
+
+            // 2. Ambient Trilight
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.65f, 0.75f, 0.90f);
+            RenderSettings.ambientEquatorColor = new Color(0.70f, 0.65f, 0.55f);
+            RenderSettings.ambientGroundColor = new Color(0.25f, 0.22f, 0.18f);
+            RenderSettings.ambientIntensity = 1.1f;
+
+            // 3. Directional Sun
+            Light sunLight = null;
+            var sunGo = GameObject.Find("Directional Light (Sun)");
+            if (sunGo != null) sunLight = sunGo.GetComponent<Light>();
+            if (sunLight == null) sunLight = UnityEngine.Object.FindAnyObjectByType<Light>();
+
+            if (sunLight != null)
+            {
+                sunLight.type = LightType.Directional;
+                sunLight.transform.rotation = Quaternion.Euler(42f, -35f, 0f);
+                sunLight.color = new Color(1.0f, 0.96f, 0.88f);
+                sunLight.intensity = 1.25f;
+                sunLight.shadows = LightShadows.Soft;
+                sunLight.shadowStrength = 0.85f;
+            }
+
+            // 4. Fog
+            RenderSettings.fog = true;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogDensity = 0.0006f;
+            RenderSettings.fogColor = new Color(0.68f, 0.76f, 0.86f);
         }
 
         private void EnsureLogisticsAndTraffic()
@@ -182,7 +230,7 @@ namespace Bussigo.Core
             // Ensure rig hierarchy transforms (camera mounts, wheels, steering wheel, glider door)
             EnsureRigHierarchyTransforms(heroBusInstance, rigHierarchy);
 
-            // Ensure 3D Visual Mesh is loaded and rendered on Hero Bus
+            // Ensure 3D Visual Mesh Hierarchy is loaded and rendered on Hero Bus
             EnsureHeroBusVisualMesh(heroBusInstance, rigHierarchy);
 
             // Connect vehicle component references
@@ -200,9 +248,10 @@ namespace Bussigo.Core
             {
                 cameraRig.targetCamera = mainCam;
                 mainCam.cullingMask = ~0; // Render all layers
+                mainCam.clearFlags = CameraClearFlags.Skybox;
                 mainCam.nearClipPlane = 0.1f;
                 mainCam.farClipPlane = 3500f;
-                mainCam.fieldOfView = 55f;
+                mainCam.fieldOfView = 54f;
 
                 // Immediately snap camera to Mount_ExteriorChase
                 if (rigHierarchy.cameraMountChase != null)
@@ -222,37 +271,15 @@ namespace Bussigo.Core
         private void EnsureHeroBusVisualMesh(GameObject busRoot, BusModelRigHierarchy rig)
         {
             Transform exterior = rig.exteriorRoot != null ? rig.exteriorRoot : busRoot.transform;
-            if (exterior.GetComponentInChildren<MeshRenderer>() == null)
+            if (exterior.Find("CoachModel_RiggedLOD0") == null && exterior.GetComponentInChildren<MeshRenderer>() == null)
             {
-                // Try load production 12.5m Indian Luxury Coach OBJ mesh
-                string objPath = Path.Combine(Application.dataPath, "Bussigo/Assets/Models/Bus/IndianIntercityCoach_12M_Hero_LOD0.obj");
-                Mesh coachMesh = ObjMeshLoader.LoadObjFile(objPath);
+                // Create Dedicated PBR Materials for Coach Sub-assemblies
+                Material bodyMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
+                bodyMat.name = "Coach_Livery_CrimsonRed_PBR";
+                bodyMat.color = new Color(0.80f, 0.10f, 0.14f);
+                bodyMat.SetFloat("_Glossiness", 0.88f);
+                bodyMat.SetFloat("_Metallic", 0.35f);
 
-                if (coachMesh == null)
-                {
-                    string fallbackObj = Path.Combine(Application.dataPath, "Bussigo/Assets/Models/Bus/IndianIntercityCoach_12M.obj");
-                    coachMesh = ObjMeshLoader.LoadObjFile(fallbackObj);
-                }
-
-                GameObject bodyGo = new GameObject("CoachBody_MeshRenderer");
-                bodyGo.transform.SetParent(exterior, false);
-                bodyGo.transform.localPosition = Vector3.zero;
-                bodyGo.transform.localRotation = Quaternion.identity;
-
-                MeshFilter mf = bodyGo.AddComponent<MeshFilter>();
-                MeshRenderer mr = bodyGo.AddComponent<MeshRenderer>();
-
-                if (coachMesh != null)
-                {
-                    mf.sharedMesh = coachMesh;
-                }
-
-                // Create Master PBR Material
-                Material pbrMat = new Material(Shader.Find("Standard") ?? Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Diffuse"));
-                pbrMat.name = "IndianIntercityCoach_PBR_Mat";
-                pbrMat.color = new Color(0.82f, 0.12f, 0.16f); // Crimson AP Express Red
-
-                // Try load 2K PBR Albedo texture
                 string texPath = Path.Combine(Application.dataPath, "Bussigo/Assets/Textures/Coach_Livery_Albedo_2K.png");
                 if (File.Exists(texPath))
                 {
@@ -260,16 +287,51 @@ namespace Bussigo.Core
                     Texture2D albedoTex = new Texture2D(2048, 2048, TextureFormat.RGBA32, true);
                     if (albedoTex.LoadImage(texBytes))
                     {
-                        pbrMat.mainTexture = albedoTex;
-                        pbrMat.color = Color.white;
+                        bodyMat.mainTexture = albedoTex;
+                        bodyMat.color = Color.white;
                     }
                 }
 
-                mr.sharedMaterial = pbrMat;
+                Material glassMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
+                glassMat.name = "Coach_TintedGlass_PBR";
+                glassMat.color = new Color(0.08f, 0.12f, 0.18f, 0.85f);
+                glassMat.SetFloat("_Glossiness", 0.96f);
+                glassMat.SetFloat("_Metallic", 0.20f);
 
-                // Ensure Front Projector Headlights
+                Material skirtingMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
+                skirtingMat.name = "Coach_LowerSkirting_PBR";
+                skirtingMat.color = new Color(0.15f, 0.15f, 0.16f);
+                skirtingMat.SetFloat("_Glossiness", 0.40f);
+
+                Material roofMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
+                roofMat.name = "Coach_RoofAC_PBR";
+                roofMat.color = new Color(0.88f, 0.88f, 0.90f);
+                roofMat.SetFloat("_Glossiness", 0.70f);
+
+                Material wheelMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
+                wheelMat.name = "Coach_WheelRubberRim_PBR";
+                wheelMat.color = new Color(0.12f, 0.12f, 0.12f);
+                wheelMat.SetFloat("_Glossiness", 0.35f);
+
+                // Load Complete Multi-Material OBJ Hierarchy
+                string objPath = Path.Combine(Application.dataPath, "Bussigo/Assets/Models/Bus/IndianIntercityCoach_12M_Hero_LOD0.obj");
+                if (!File.Exists(objPath))
+                {
+                    objPath = Path.Combine(Application.dataPath, "Bussigo/Assets/Models/Bus/IndianIntercityCoach_12M.obj");
+                }
+
+                ObjMeshLoader.LoadObjHierarchy(objPath, exterior, bodyMat, glassMat, skirtingMat, roofMat, wheelMat);
+
+                // Front Projector Headlights
                 CreateProjectorHeadlight(exterior, new Vector3(-0.95f, 0.85f, 6.25f));
                 CreateProjectorHeadlight(exterior, new Vector3(0.95f, 0.85f, 6.25f));
+
+                // LED Destination Display Board
+                CreateDestinationBoard(exterior);
+
+                // Wing Mirrors on A-Pillars
+                CreateWingMirror(exterior, new Vector3(-1.42f, 2.2f, 5.85f), true);
+                CreateWingMirror(exterior, new Vector3(1.42f, 2.2f, 5.85f), false);
             }
         }
 
@@ -280,10 +342,81 @@ namespace Bussigo.Core
             lightGo.transform.localPosition = localPos;
             Light spotLight = lightGo.AddComponent<Light>();
             spotLight.type = LightType.Spot;
-            spotLight.range = 80f;
-            spotLight.spotAngle = 48f;
-            spotLight.intensity = 2.5f;
+            spotLight.range = 90f;
+            spotLight.spotAngle = 46f;
+            spotLight.intensity = 2.8f;
             spotLight.color = new Color(1.0f, 0.96f, 0.88f);
+        }
+
+        private void CreateDestinationBoard(Transform parent)
+        {
+            GameObject boardGo = new GameObject("LED_DestinationBoard");
+            boardGo.transform.SetParent(parent, false);
+            boardGo.transform.localPosition = new Vector3(0f, 3.25f, 5.65f);
+            boardGo.transform.localRotation = Quaternion.identity;
+
+            MeshFilter mf = boardGo.AddComponent<MeshFilter>();
+            MeshRenderer mr = boardGo.AddComponent<MeshRenderer>();
+
+            Mesh boxMesh = new Mesh();
+            boxMesh.name = "LED_Board_Mesh";
+            float w = 1.6f, h = 0.26f, d = 0.05f;
+            boxMesh.vertices = new Vector3[]
+            {
+                new Vector3(-w*0.5f, -h*0.5f, 0), new Vector3(w*0.5f, -h*0.5f, 0),
+                new Vector3(w*0.5f, h*0.5f, 0), new Vector3(-w*0.5f, h*0.5f, 0)
+            };
+            boxMesh.triangles = new int[] { 0, 2, 1, 0, 3, 2 };
+            boxMesh.normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
+            boxMesh.RecalculateBounds();
+            mf.sharedMesh = boxMesh;
+
+            Material ledMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
+            ledMat.name = "LED_Amber_Display_Mat";
+            ledMat.color = new Color(1.0f, 0.65f, 0.05f);
+            ledMat.EnableKeyword("_EMISSION");
+            ledMat.SetColor("_EmissionColor", new Color(1.0f, 0.55f, 0.05f) * 1.5f);
+            mr.sharedMaterial = ledMat;
+        }
+
+        private void CreateWingMirror(Transform parent, Vector3 localPos, bool isLeft)
+        {
+            GameObject mirrorGo = new GameObject(isLeft ? "WingMirror_Left" : "WingMirror_Right");
+            mirrorGo.transform.SetParent(parent, false);
+            mirrorGo.transform.localPosition = localPos;
+
+            MeshFilter mf = mirrorGo.AddComponent<MeshFilter>();
+            MeshRenderer mr = mirrorGo.AddComponent<MeshRenderer>();
+
+            Mesh mirrorMesh = new Mesh();
+            mirrorMesh.name = "MirrorMesh";
+            float mw = 0.16f, mh = 0.38f, md = 0.08f;
+            float hw = mw * 0.5f, hh = mh * 0.5f, hd = md * 0.5f;
+
+            Vector3[] vertices = new Vector3[]
+            {
+                new Vector3(-hw, -hh, -hd), new Vector3(hw, -hh, -hd), new Vector3(hw, hh, -hd), new Vector3(-hw, hh, -hd),
+                new Vector3(-hw, -hh, hd), new Vector3(hw, -hh, hd), new Vector3(hw, hh, hd), new Vector3(-hw, hh, hd)
+            };
+            mirrorMesh.vertices = vertices;
+            mirrorMesh.triangles = new int[]
+            {
+                0, 2, 1, 0, 3, 2, // Front
+                5, 6, 4, 6, 7, 4, // Back
+                4, 7, 0, 7, 3, 0, // Left
+                1, 2, 5, 2, 6, 5, // Right
+                3, 7, 2, 7, 6, 2, // Top
+                0, 1, 4, 1, 5, 4  // Bottom
+            };
+            mirrorMesh.RecalculateNormals();
+            mirrorMesh.RecalculateBounds();
+            mf.sharedMesh = mirrorMesh;
+
+            Material mirrorMat = new Material(Shader.Find("Standard") ?? Shader.Find("Diffuse"));
+            mirrorMat.color = new Color(0.18f, 0.18f, 0.18f);
+            mirrorMat.SetFloat("_Glossiness", 0.90f);
+            mirrorMat.SetFloat("_Metallic", 0.85f);
+            mr.sharedMaterial = mirrorMat;
         }
 
         private void EnsureRigHierarchyTransforms(GameObject busRoot, BusModelRigHierarchy rig)
@@ -384,7 +517,7 @@ namespace Bussigo.Core
                 return mount;
             }
 
-            rig.cameraMountChase = FindOrCreateMount(cameraMounts, "Mount_ExteriorChase", new Vector3(0f, 3.8f, -14.5f), Quaternion.Euler(11f, 0f, 0f));
+            rig.cameraMountChase = FindOrCreateMount(cameraMounts, "Mount_ExteriorChase", new Vector3(0f, 3.6f, -13.5f), Quaternion.Euler(10.5f, 0f, 0f));
             rig.cameraMountBumper = FindOrCreateMount(cameraMounts, "Mount_FrontBumper", new Vector3(0f, 0.85f, 6.45f), Quaternion.identity);
             rig.cameraMountCockpitDriverEye = FindOrCreateMount(cameraMounts, "Mount_DriverEye", new Vector3(-0.60f, 2.15f, 4.75f), Quaternion.identity);
             rig.cameraMountPassengerCabin = FindOrCreateMount(cameraMounts, "Mount_PassengerCabin", new Vector3(0f, 2.35f, 1.20f), Quaternion.identity);
