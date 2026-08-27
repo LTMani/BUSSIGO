@@ -9,25 +9,25 @@ namespace Bussigo.Game.Routes
         public static HighwayCorridor BuildRuralFeederRoute()
         {
             var corridor = new HighwayCorridor(
-                "COR-RURAL-FEEDER-045",
+                "COR-RURAL-FEEDER-45",
                 "Rural Feeder Mandal Hub 45",
                 "District Commercial Center 45",
                 234.0f,
-                6.50f,
-                260.0f
+                2.50f,
+                30.0f
             );
 
             for (int w = 1; w <= 10; w++)
             {
-                double lat = 15.2 + (r_idx * 0.05) + (w * 0.025);
-                double lon = 79.1 + (r_idx * 0.06) + (w * 0.028);
+                double lat = 15.2 + (45 * 0.05) + (w * 0.025);
+                double lon = 79.1 + (45 * 0.06) + (w * 0.028);
                 double elev = 20.0 + (w * 8.5);
                 float speedLimit = (w % 2 == 0) ? 40.0f : 60.0f;
                 bool isStop = (w == 1 || w == 5 || w == 10);
 
                 corridor.AddWaypoint(new RouteWaypoint(
-                    $"WP-RURAL-045-W{w:D2}",
-                    $"Village Bus Shelter 045-{w:D2}",
+                    $"WP-RURAL-45-W{w:D2}",
+                    $"Village Bus Shelter 45-{w:D2}",
                     lat,
                     lon,
                     elev,

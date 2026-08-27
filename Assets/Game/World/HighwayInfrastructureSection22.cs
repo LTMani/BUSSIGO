@@ -11,7 +11,7 @@ namespace Bussigo.Game.World
         public int NumberOfLanes { get; set; } = 6;
         public float AsphaltFrictionCoefficient { get; set; } = 0.950f;
         public bool HasReflectiveCatsEyes { get; set; } = true;
-        public bool HasOverheadSignageGantry { get; set; } = False;
+        public bool HasOverheadSignageGantry { get; set; } = false;
         public bool HasGuardRailsBothSides { get; set; } = true;
         public float RoadElevationGradientPercent { get; set; } = 2.63f;
 

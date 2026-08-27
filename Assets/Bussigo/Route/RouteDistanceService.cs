@@ -14,7 +14,7 @@ namespace Bussigo.Route
         public void Initialize()
         {
             ServiceLocator.Register<RouteDistanceService>(this);
-            Debug.Log("[BUSSIGO] RouteDistanceService initialized: True physical distance enabled.");
+            Debug.Log("[BUSSIGO] RouteDistanceService initialized: true physical distance enabled.");
         }
 
         public void Shutdown()

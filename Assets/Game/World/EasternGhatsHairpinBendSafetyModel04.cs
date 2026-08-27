@@ -9,7 +9,7 @@ namespace Bussigo.Game.World
         public float CurveRadiusMeters { get; set; } = 24.0f; // Tight mountain radius 14m to 28m
         public float SuperelevationBankingAngleDegrees { get; set; } = 5.5f;
         public float DownhillGradientPercent { get; set; } = 12.9f; // Steep 8.5% to 14% descent
-        public bool HasRunawayTruckEscapeRamp { get; set; } = True;
+        public bool HasRunawayTruckEscapeRamp { get; set; } = true;
         public float RecommendedApproachSpeedKmh { get; set; } = 25.0f;
 
         public float CalculateCentrifugalLateralAccelerationMps2(float busSpeedKmh)

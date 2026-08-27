@@ -12,15 +12,15 @@ namespace Bussigo.Game.Routes
                 "COR-PROFILE-17",
                 "Major South Indian City Hub 17",
                 "Interstate Destination Terminal 17",
-                239.5f,
-                4.52f,
-                324.0f
+                190.5f,
+                2.28f,
+                205.0f
             );
 
             for (int p = 1; p <= 12; p++)
             {
-                double lat = 14.5 + (route_idx * 0.08) + (p * 0.035);
-                double lon = 78.5 + (route_idx * 0.09) + (p * 0.042);
+                double lat = 14.5 + (17 * 0.08) + (p * 0.035);
+                double lon = 78.5 + (17 * 0.09) + (p * 0.042);
                 double elev = 35.0 + MathF.Sin(p * 0.5f) * 120.0;
                 float speedLimit = (p % 3 == 0) ? 60.0f : 80.0f;
                 bool isStop = (p == 1 || p == 6 || p == 12);

@@ -1,7 +1,7 @@
 using System;
 using Bussigo.Game.Core;
 
-namespace Bussigo.Game.Input
+namespace Bussigo.Game.InputSystem
 {
     public class InputAxisBindingConfiguration03
     {

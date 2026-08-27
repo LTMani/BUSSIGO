@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Bussigo.Game.Debug
+namespace Bussigo.Game.Diagnostics
 {
     public class DeveloperDebugConsole
     {
