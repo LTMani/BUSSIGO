@@ -11,8 +11,12 @@ namespace Bussigo.Passengers
     /// </summary>
     public class PassengerManager : MonoBehaviour, IService
     {
+        [NonSerialized]
         public BoardingManager boardingManager = new BoardingManager();
+
+        [NonSerialized]
         public PassengerSatisfactionSystem satisfactionSystem = new PassengerSatisfactionSystem();
+
         public BusChassisController playerBus;
 
         public float AverageSatisfaction => satisfactionSystem.CalculateAggregateSatisfaction(boardingManager.onboardPassengers);

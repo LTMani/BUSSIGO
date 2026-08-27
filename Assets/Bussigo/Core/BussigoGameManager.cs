@@ -86,6 +86,11 @@ namespace Bussigo.Core
             EventBus.Publish(new TollPlazaCrossedEvent(plazaName, tollAmount, fastagBalanceINR));
         }
 
+        public void DeductFastagToll(int tollAmount)
+        {
+            DeductFastagToll("Kanchikacherla FASTag Toll Plaza", tollAmount);
+        }
+
         public void ArriveAtDestination()
         {
             StateMachine.ChangeState(GamePhase.DestinationArrival);

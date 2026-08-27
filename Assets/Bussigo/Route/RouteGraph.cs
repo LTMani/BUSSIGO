@@ -15,7 +15,6 @@ namespace Bussigo.Route
         RestAreaFoodHub = 6
     }
 
-    [Serializable]
     public class RouteNode
     {
         public string nodeID;
@@ -37,11 +36,17 @@ namespace Bussigo.Route
         }
     }
 
-    [Serializable]
+    /// <summary>
+    /// Pure C# domain graph representing the connected NH65 highway topology.
+    /// </summary>
     public class RouteGraph
     {
+        [NonSerialized]
         public Dictionary<string, RouteNode> nodes = new Dictionary<string, RouteNode>();
+
+        [NonSerialized]
         public Dictionary<string, RoadSegment> segments = new Dictionary<string, RoadSegment>();
+
         public List<string> primaryRouteSegmentOrder = new List<string>();
 
         public void AddNode(RouteNode node)

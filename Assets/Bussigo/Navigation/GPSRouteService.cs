@@ -22,7 +22,10 @@ namespace Bussigo.Navigation
     /// </summary>
     public class GPSRouteService : MonoBehaviour, IService
     {
+        [NonSerialized]
         public RouteDistanceService distanceService;
+
+        [NonSerialized]
         public RouteGraph activeGraph;
 
         public GPSNavigationTelemetry CurrentTelemetry { get; private set; }
