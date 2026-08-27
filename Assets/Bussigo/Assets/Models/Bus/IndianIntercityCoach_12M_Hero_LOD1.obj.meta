@@ -1,2 +1,32 @@
 fileFormatVersion: 2
 guid: d1c9a6821f9389d4ca1475e1fa90d039
+ModelImporter:
+  serializedVersion: 23
+  internalIDToNameTable: []
+  externalObjects: {}
+  materials:
+    materialImportMode: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    animationType: 0
+    importAnimation: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    useFileUnits: 1
+    keepQuads: 0
+    indexFormat: 1
+    weldVertices: 1
+    bakeAxisConversion: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    nodeNameCollisionStrategy: 0
+    generateColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
