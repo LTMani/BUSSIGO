@@ -21,6 +21,10 @@ namespace Bussigo.Vehicle
         public float primaryAirPressureBar => physicsModel.AirBrakes.currentReservoirPressureBar;
         public int retarderLevel => physicsModel.Retarder.currentStage;
 
+        public float SteerInput => currentSteerInput;
+        public float ThrottleInput => currentThrottleInput;
+        public float BrakeInput => currentBrakeInput;
+
         private Rigidbody rb;
         private float currentSteerInput = 0f;
         private float currentThrottleInput = 0f;

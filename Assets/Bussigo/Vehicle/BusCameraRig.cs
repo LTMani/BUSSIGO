@@ -27,7 +27,47 @@ namespace Bussigo.Vehicle
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.C))
+            bool cycleKeyPressed = false;
+
+            // 1. Try New Input System
+            try
+            {
+                var keyboardType = Type.GetType("UnityEngine.InputSystem.Keyboard, Unity.InputSystem");
+                if (keyboardType != null)
+                {
+                    var currentProp = keyboardType.GetProperty("current", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                    var keyboard = currentProp?.GetValue(null);
+                    if (keyboard != null)
+                    {
+                        var cKeyProp = keyboard.GetType().GetProperty("cKey");
+                        var cKey = cKeyProp?.GetValue(keyboard);
+                        if (cKey != null)
+                        {
+                            var wasPressedProp = cKey.GetType().GetProperty("wasPressedThisFrame");
+                            if (wasPressedProp != null && (bool)wasPressedProp.GetValue(cKey))
+                            {
+                                cycleKeyPressed = true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            // 2. Fallback to Legacy Input Manager
+            if (!cycleKeyPressed)
+            {
+                try
+                {
+                    if (Input.GetKeyDown(KeyCode.C))
+                    {
+                        cycleKeyPressed = true;
+                    }
+                }
+                catch { }
+            }
+
+            if (cycleKeyPressed)
             {
                 CycleCameraMode();
             }

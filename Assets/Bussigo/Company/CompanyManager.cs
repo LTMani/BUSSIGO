@@ -22,10 +22,13 @@ namespace Bussigo.Company
         public readonly List<DriverProfile> hiredDrivers = new List<DriverProfile>();
         public readonly List<string> unlockedRouteIDs = new List<string>();
 
-        public FleetBusData ActiveHeroBus => ownedFleet.Count > 0 ? ownedFleet[0] : null;
+        private bool isInitialized = false;
 
         public void Initialize()
         {
+            if (isInitialized) return;
+            isInitialized = true;
+
             ServiceLocator.Register<CompanyManager>(this);
 
             // 1. Initialize Default Flagship Hero Bus (12.5m Indian Intercity Coach)

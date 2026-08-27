@@ -24,7 +24,7 @@ namespace Bussigo.Vehicle
             currentWheelRotationDeg += angularVelocityRad * Mathf.Rad2Deg * Time.deltaTime;
 
             float currentSteerAngle = chassisController.physicsModel.CalculateSteerAngle(
-                steerInput01: Input.GetAxis("Horizontal"),
+                steerInput01: chassisController.SteerInput,
                 vehicleSpeedKmh: chassisController.currentSpeedKmh
             );
 

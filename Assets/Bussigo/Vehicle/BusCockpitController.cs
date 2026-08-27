@@ -37,7 +37,7 @@ namespace Bussigo.Vehicle
             if (chassisController == null || rigHierarchy == null) return;
 
             // 1. Steering Wheel Rotation
-            float steerInput = Input.GetAxis("Horizontal");
+            float steerInput = chassisController.SteerInput;
             if (rigHierarchy.steeringWheelTransform != null)
             {
                 float targetZRotation = -steerInput * steeringWheelMaxRotationDegrees;
