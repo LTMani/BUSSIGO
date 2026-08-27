@@ -69,6 +69,8 @@ namespace Bussigo.Game.Core
         public static readonly Vector3D Right = new Vector3D(1f, 0f, 0f);
         public static readonly Vector3D Left = new Vector3D(-1f, 0f, 0f);
 
+        public Vector3D(double x, double y, double z) : this((float)x, (float)y, (float)z) { }
+
         public Vector3D(float x, float y, float z)
         {
             X = x;

@@ -23,7 +23,12 @@ namespace Bussigo.Game.SaveSystem
         {
             using var sha = SHA256.Create();
             byte[] bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(content));
-            return Convert.ToHexString(bytes);
+            var sb = new StringBuilder(bytes.Length * 2);
+            foreach (byte b in bytes)
+            {
+                sb.Append(b.ToString("X2"));
+            }
+            return sb.ToString();
         }
 
         public static bool ValidateSaveData(string jsonContent, string expectedChecksum)

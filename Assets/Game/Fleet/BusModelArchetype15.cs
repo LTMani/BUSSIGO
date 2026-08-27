@@ -25,7 +25,7 @@ namespace Bussigo.Game.Fleet
                 GrossVehicleWeightKg = 23000.0f,
                 FrontAxleWeightRatio = 0.35f,
                 AxleCount = 3,
-                HasTagAxleSteer = True,
+                HasTagAxleSteer = true,
                 EngineDisplacementLiters = 10.85f,
                 MaxHorsepower = 420.0f,
                 MaxPowerRpm = 2200f,

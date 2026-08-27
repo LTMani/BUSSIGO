@@ -22,7 +22,7 @@ namespace Bussigo.Game.World
                     DestinationSignboardEnglish = $"Platform Bay {b} Intercity Corridor",
                     DestinationSignboardTelugu = $"ప్లాట్‌ఫారమ్ {b} అంతర్రాష్ట్ర సర్వీస్",
                     IsOccupiedByBus = false,
-                    DockPosition = new Vector3D(b * 12.0, 0.0, 0.0)
+                    DockPosition = new Vector3D(b * 12.0f, 0.0f, 0.0f)
                 });
             }
         }

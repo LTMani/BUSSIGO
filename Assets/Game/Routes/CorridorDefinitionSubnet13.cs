@@ -12,16 +12,16 @@ namespace Bussigo.Game.Routes
                 "COR-SUBNET-13",
                 "Origin Terminal Sector 13",
                 "Destination Terminal Sector 13",
-                308.5f,
-                5.84f,
-                384.0f
+                210.5f,
+                2.65f,
+                280.0f
             );
 
             for (int w = 1; w <= 16; w++)
             {
-                double lat = 15.0 + (c_idx * 0.12) + (w * 0.045);
-                double lon = 78.0 + (c_idx * 0.15) + (w * 0.052);
-                double elev = 25.0 + (w * 18.5) + ((c_idx % 4) * 45.0);
+                double lat = 15.0 + (13 * 0.12) + (w * 0.045);
+                double lon = 78.0 + (13 * 0.15) + (w * 0.052);
+                double elev = 25.0 + (w * 18.5) + ((13 % 4) * 45.0);
                 float speedLimit = (w % 4 == 0) ? 50.0f : 80.0f;
                 bool isStop = (w == 1 || w == 8 || w == 16);
 

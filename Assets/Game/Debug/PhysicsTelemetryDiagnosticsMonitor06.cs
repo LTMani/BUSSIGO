@@ -2,7 +2,7 @@ using System;
 using Bussigo.Game.Core;
 using Bussigo.Game.Vehicles;
 
-namespace Bussigo.Game.Debug
+namespace Bussigo.Game.Diagnostics
 {
     public class PhysicsTelemetryDiagnosticsMonitor06
     {
