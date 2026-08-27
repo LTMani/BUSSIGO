@@ -125,13 +125,22 @@ namespace Bussigo.Core
 
         private void EnsureWorldEnvironment()
         {
-            if (timeOfDayService == null) timeOfDayService = FindOrCreate<TimeOfDayService>("[WORLD_ENVIRONMENT]");
-            if (weatherManager == null) weatherManager = FindOrCreate<DynamicWeatherManager>("[WORLD_ENVIRONMENT]");
-            if (roadsideManager == null) roadsideManager = FindOrCreate<RoadsideInfrastructureManager>("[WORLD_ENVIRONMENT]");
+            var worldGo = GameObject.Find("[WORLD_ENVIRONMENT]");
+            if (worldGo == null) worldGo = new GameObject("[WORLD_ENVIRONMENT]");
+
+            if (timeOfDayService == null) timeOfDayService = GetOrAdd<TimeOfDayService>(worldGo);
+            if (weatherManager == null) weatherManager = GetOrAdd<DynamicWeatherManager>(worldGo);
+            if (roadsideManager == null) roadsideManager = GetOrAdd<RoadsideInfrastructureManager>(worldGo);
 
             timeOfDayService.Initialize();
             weatherManager.Initialize();
             roadsideManager.InitializeCorridorInfrastructure();
+
+            // Instantiate NH65 Highway Corridor, Lane Markings, Dividers, Guardrails, and PNBS Terminal Platform
+            if (worldGo.transform.Find("PNBS_TerminalPlatform_Bay4") == null)
+            {
+                HighwayRoadMeshGenerator.GenerateCorridorGeometry(worldGo.transform, routeGraph, roadStreamer);
+            }
         }
 
         private void EnsureLogisticsAndTraffic()
@@ -155,9 +164,9 @@ namespace Bussigo.Core
                 }
                 else
                 {
-                    // Create Hero Bus Root at Vijayawada PNBS Platform 4 (Lane 1)
+                    // Create Hero Bus Root at Vijayawada PNBS Platform 4 (Lane 1, forward heading)
                     heroBusInstance = new GameObject("IndianIntercityCoach_12M_Hero_LOD0");
-                    heroBusInstance.transform.position = new Vector3(3.5f, 0.52f, 0f);
+                    heroBusInstance.transform.position = new Vector3(3.75f, 0.52f, 0f);
                     heroBusInstance.transform.rotation = Quaternion.identity;
                 }
             }
@@ -190,11 +199,12 @@ namespace Bussigo.Core
             if (mainCam != null)
             {
                 cameraRig.targetCamera = mainCam;
-                mainCam.cullingMask = ~0; // Render everything
+                mainCam.cullingMask = ~0; // Render all layers
                 mainCam.nearClipPlane = 0.1f;
-                mainCam.farClipPlane = 3000f;
+                mainCam.farClipPlane = 3500f;
+                mainCam.fieldOfView = 55f;
 
-                // Immediately snap camera to chase mount
+                // Immediately snap camera to Mount_ExteriorChase
                 if (rigHierarchy.cameraMountChase != null)
                 {
                     mainCam.transform.position = rigHierarchy.cameraMountChase.position;
@@ -374,7 +384,7 @@ namespace Bussigo.Core
                 return mount;
             }
 
-            rig.cameraMountChase = FindOrCreateMount(cameraMounts, "Mount_ExteriorChase", new Vector3(0f, 4.2f, -12.5f), Quaternion.Euler(14f, 0f, 0f));
+            rig.cameraMountChase = FindOrCreateMount(cameraMounts, "Mount_ExteriorChase", new Vector3(0f, 3.8f, -14.5f), Quaternion.Euler(11f, 0f, 0f));
             rig.cameraMountBumper = FindOrCreateMount(cameraMounts, "Mount_FrontBumper", new Vector3(0f, 0.85f, 6.45f), Quaternion.identity);
             rig.cameraMountCockpitDriverEye = FindOrCreateMount(cameraMounts, "Mount_DriverEye", new Vector3(-0.60f, 2.15f, 4.75f), Quaternion.identity);
             rig.cameraMountPassengerCabin = FindOrCreateMount(cameraMounts, "Mount_PassengerCabin", new Vector3(0f, 2.35f, 1.20f), Quaternion.identity);

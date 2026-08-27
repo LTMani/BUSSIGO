@@ -79,7 +79,7 @@ namespace Bussigo.Vehicle
             GameObject cameraMounts = new GameObject("CameraMounts");
             cameraMounts.transform.SetParent(busRoot.transform, false);
 
-            rig.cameraMountChase = CreateMount(cameraMounts.transform, "Mount_ExteriorChase", new Vector3(0f, 4.2f, -12.5f), Quaternion.Euler(14f, 0f, 0f));
+            rig.cameraMountChase = CreateMount(cameraMounts.transform, "Mount_ExteriorChase", new Vector3(0f, 3.8f, -14.5f), Quaternion.Euler(11f, 0f, 0f));
             rig.cameraMountBumper = CreateMount(cameraMounts.transform, "Mount_FrontBumper", new Vector3(0f, 0.85f, 6.45f), Quaternion.identity);
             rig.cameraMountCockpitDriverEye = CreateMount(cameraMounts.transform, "Mount_DriverEye", new Vector3(-0.60f, 2.15f, 4.75f), Quaternion.identity);
             rig.cameraMountPassengerCabin = CreateMount(cameraMounts.transform, "Mount_PassengerCabin", new Vector3(0f, 2.35f, 1.20f), Quaternion.identity);
