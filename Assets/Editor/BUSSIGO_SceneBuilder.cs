@@ -25,6 +25,7 @@ namespace Bussigo.Editor
     public static class BUSSIGO_SceneBuilder
     {
         private const string SCENE_PATH = "Assets/Bussigo/Scenes/BUSSIGO_Main.unity";
+        private const string HERO_MODEL_PATH = "Assets/Bussigo/Assets/Models/Bus/IndianIntercityCoach_12M_Hero_LOD0.obj";
 
         static BUSSIGO_SceneBuilder()
         {
@@ -69,24 +70,90 @@ namespace Bussigo.Editor
             GameObject bootstrapGo = new GameObject("[BUSSIGO_MASTER_BOOTSTRAP]");
             BussigoSceneBootstrap bootstrap = bootstrapGo.AddComponent<BussigoSceneBootstrap>();
 
-            // 4. Hero Bus Root (IndianIntercityCoach_12M_Hero_LOD0)
-            GameObject heroBus = new GameObject("IndianIntercityCoach_12M_Hero_LOD0");
-            heroBus.transform.position = new Vector3(3.5f, 0.52f, 0f);
+            // 4. Core Services
+            GameObject coreGo = new GameObject("[CORE_SERVICES]");
+            var servLoc = coreGo.AddComponent<ServiceLocator>();
+            var evtBus = coreGo.AddComponent<EventBus>();
+            var gsm = coreGo.AddComponent<GameStateMachine>();
+            var econMgr = coreGo.AddComponent<EconomyManager>();
+            var compMgr = coreGo.AddComponent<CompanyManager>();
+            var saveSys = coreGo.AddComponent<SaveSystem>();
 
-            var chassis = heroBus.AddComponent<BusChassisController>();
-            var physics = heroBus.AddComponent<HeavyVehiclePhysicsModel>();
-            var wheelSync = heroBus.AddComponent<BusWheelVisualSync>();
-            var cockpit = heroBus.AddComponent<BusCockpitController>();
-            var door = heroBus.AddComponent<BusDoorActuator>();
-            var cameraRig = heroBus.AddComponent<BusCameraRig>();
+            // 5. World Environment
+            GameObject worldGo = new GameObject("[WORLD_ENVIRONMENT]");
+            var timeSvc = worldGo.AddComponent<TimeOfDayService>();
+            var weatherMgr = worldGo.AddComponent<DynamicWeatherManager>();
+            var roadsideMgr = worldGo.AddComponent<RoadsideInfrastructureManager>();
 
-            chassis.physicsModel = physics;
-            chassis.doorActuator = door;
-            wheelSync.chassis = chassis;
-            cockpit.chassis = chassis;
-            cameraRig.targetBus = heroBus.transform;
-            cameraRig.chassis = chassis;
+            // 6. Road Network
+            GameObject roadGo = new GameObject("[ROAD_NETWORK]");
+            var hwyBuilder = roadGo.AddComponent<NH65HighwayNetworkBuilder>();
+            var routeGraph = roadGo.AddComponent<RouteGraph>();
+            var distSvc = roadGo.AddComponent<RouteDistanceService>();
+            var roadStreamer = roadGo.AddComponent<RoadSegmentStreamer>();
 
+            // 7. Traffic Simulation
+            GameObject trafficGo = new GameObject("[TRAFFIC_SIMULATION]");
+            var trafficMgr = trafficGo.AddComponent<TrafficManager>();
+            var trafficSpawn = trafficGo.AddComponent<TrafficSpawner>();
+
+            // 8. Passenger System
+            GameObject paxGo = new GameObject("[PASSENGER_SYSTEM]");
+            var paxMgr = paxGo.AddComponent<PassengerManager>();
+            var boardMgr = paxGo.AddComponent<BoardingManager>();
+
+            // 9. Audio System
+            GameObject audioGo = new GameObject("[AUDIO_SYSTEM]");
+            var audioMixer = audioGo.AddComponent<BusAudioMixerController>();
+            var engineAudio = audioGo.AddComponent<MultiLayerEngineAudio>();
+            var airSounds = audioGo.AddComponent<PneumaticAirSoundController>();
+            var tireSounds = audioGo.AddComponent<TireRoadNoiseController>();
+
+            // 10. Hero Bus Root (IndianIntercityCoach_12M_Hero_LOD0)
+            GameObject heroModelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(HERO_MODEL_PATH);
+            GameObject heroBus = IndianCoachAssetFactory.CreateRiggedCoach(
+                new Vector3(3.5f, 0.52f, 0f),
+                Quaternion.identity,
+                heroModelPrefab
+            );
+            heroBus.name = "IndianIntercityCoach_12M_Hero_LOD0";
+
+            var chassis = heroBus.GetComponent<BusChassisController>();
+            var physics = heroBus.GetComponent<HeavyVehiclePhysicsModel>();
+            var wheelSync = heroBus.GetComponent<BusWheelVisualSync>();
+            var cockpit = heroBus.GetComponent<BusCockpitController>();
+            var door = heroBus.GetComponent<BusDoorActuator>();
+            var cameraRig = heroBus.GetComponent<BusCameraRig>();
+
+            // 11. Simulator HUD
+            GameObject hudGo = new GameObject("[SIMULATOR_HUD]");
+            var tripHUD = hudGo.AddComponent<TripHUDController>();
+            tripHUD.chassis = chassis;
+            tripHUD.timeService = timeSvc;
+            tripHUD.weatherManager = weatherMgr;
+            tripHUD.passengerManager = paxMgr;
+            tripHUD.economyManager = econMgr;
+
+            // Connect Bootstrap references
+            bootstrap.serviceLocator = servLoc;
+            bootstrap.eventBus = evtBus;
+            bootstrap.gameStateMachine = gsm;
+            bootstrap.economyManager = econMgr;
+            bootstrap.companyManager = compMgr;
+            bootstrap.saveSystem = saveSys;
+            bootstrap.timeOfDayService = timeSvc;
+            bootstrap.weatherManager = weatherMgr;
+            bootstrap.roadsideManager = roadsideMgr;
+            bootstrap.highwayBuilder = hwyBuilder;
+            bootstrap.routeGraph = routeGraph;
+            bootstrap.distanceService = distSvc;
+            bootstrap.roadStreamer = roadStreamer;
+            bootstrap.trafficManager = trafficMgr;
+            bootstrap.passengerManager = paxMgr;
+            bootstrap.audioMixer = audioMixer;
+            bootstrap.engineAudio = engineAudio;
+            bootstrap.airSounds = airSounds;
+            bootstrap.tireSounds = tireSounds;
             bootstrap.heroBusInstance = heroBus;
             bootstrap.chassisController = chassis;
             bootstrap.physicsModel = physics;
@@ -94,10 +161,11 @@ namespace Bussigo.Editor
             bootstrap.cockpitController = cockpit;
             bootstrap.doorActuator = door;
             bootstrap.cameraRig = cameraRig;
+            bootstrap.tripHUD = tripHUD;
 
-            // 5. Save Scene
+            // 12. Save Scene
             EditorSceneManager.SaveScene(newScene, SCENE_PATH);
-            Debug.Log("[BUSSIGO Scene Builder] SUCCESS! Saved playable scene to: " + SCENE_PATH);
+            Debug.Log("[BUSSIGO Scene Builder] SUCCESS! Saved production playable scene to: " + SCENE_PATH);
 
             EnsureMainSceneRegistered();
         }
