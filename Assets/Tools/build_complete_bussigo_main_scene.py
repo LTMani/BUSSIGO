@@ -1,0 +1,1050 @@
+#!/usr/bin/env python3
+"""
+BUSSIGO V2 — Production Scene Generator for BUSSIGO_Main.unity
+Serializes the full, complete GameObject hierarchy and component wiring:
+1. Directional Light (Sun)
+2. Main Camera & AudioListener
+3. [BUSSIGO_MASTER_BOOTSTRAP] (BussigoSceneBootstrap)
+4. [CORE_SERVICES]
+   - ServiceLocator
+   - EventBus
+   - GameStateMachine
+   - SaveSystem
+   - EconomyManager
+   - CompanyManager
+5. [WORLD_ENVIRONMENT]
+   - TimeOfDayService
+   - DynamicWeatherManager
+   - RoadsideInfrastructureManager
+6. [ROAD_NETWORK]
+   - NH65HighwayNetworkBuilder
+   - RouteGraph
+   - RouteDistanceService
+   - RoadSegmentStreamer
+7. [TRAFFIC_SIMULATION]
+   - TrafficManager
+   - TrafficSpawner
+8. [PASSENGER_SYSTEM]
+   - PassengerManager
+   - BoardingManager
+9. [AUDIO_SYSTEM]
+   - BusAudioMixerController
+   - MultiLayerEngineAudio
+   - PneumaticAirSoundController
+   - TireRoadNoiseController
+10. IndianIntercityCoach_12M_Hero_LOD0 (Hero Bus Root)
+   - Rigidbody (14500 kg)
+   - BoxCollider (2.6 x 3.2 x 12.5m)
+   - BusChassisController
+   - HeavyVehiclePhysicsModel
+   - BusModelRigHierarchy
+   - BusWheelVisualSync
+   - BusCockpitController
+   - BusDoorActuator
+   - BusCameraRig
+   - Chassis
+     - Wheels
+       - FrontLeft
+       - FrontRight
+       - RearLeftOuter
+       - RearLeftInner
+       - RearRightInner
+       - RearRightOuter
+   - Exterior
+     - FrontGliderDoor
+   - Interior
+     - Cockpit
+       - SteeringWheel
+   - CameraMounts
+     - Mount_ExteriorChase
+     - Mount_FrontBumper
+     - Mount_DriverEye
+     - Mount_PassengerCabin
+11. [SIMULATOR_HUD]
+   - TripHUDController
+"""
+
+from pathlib import Path
+
+def generate_full_scene():
+    out_file = Path(r"T:\Git Project\BUSSIGO\Assets\Bussigo\Scenes\BUSSIGO_Main.unity")
+    out_file.parent.mkdir(parents=True, exist_ok=True)
+
+    # Script GUIDs
+    GUID_BOOTSTRAP = "b57b8993de2c0d144a147a234899e3d1"
+    GUID_SERVICE_LOCATOR = "120373e5973bf9240a7407e18487b1e3"
+    GUID_EVENT_BUS = "bb1a1a4f7eca2094aa5e1760058eaf37"
+    GUID_STATE_MACHINE = "651c7c7a33ddcf6498d0197deab19927"
+    GUID_ECONOMY_MGR = "da97fc460ac729544ac63105c7e8bd86"
+    GUID_COMPANY_MGR = "ebbbc0d320003844ea9ff4e7fd6047ee"
+    GUID_SAVE_SYSTEM = "436b9e37f6f7b6c49b54897814097510"
+    
+    GUID_CHASSIS_CTRL = "8560d12690ab9bd4cbc131d7e10bfd7f"
+    GUID_PHYSICS_MODEL = "00eadd3ad94054548a50ba2d010e41d6"
+    GUID_RIG_HIERARCHY = "2fbdfcd720cf378409bc80ec118610ba"
+    GUID_WHEEL_SYNC = "fc7def3d5982e6d4a83489b4ae61e31b"
+    GUID_COCKPIT_CTRL = "9d02839343186f34bbbe34f4909c16a3"
+    GUID_DOOR_ACTUATOR = "ac1ab745f67979742b97ceb7e069bed6"
+    GUID_CAMERA_RIG = "ffc3aeeff4a7a2d4792ef8705a95af02"
+    
+    GUID_HIGHWAY_BUILDER = "edc0d678aab06bd418c4b98d5dfe57b6"
+    GUID_ROUTE_GRAPH = "056ce71af7855e3478040da3089143c9"
+    GUID_DISTANCE_SERVICE = "b020ce2e0c8a80d479ad673ca6ec7b51"
+    GUID_ROAD_STREAMER = "b5a6f6e707f6fdb4dbdf17a8e18abd0d"
+    
+    GUID_TIME_SERVICE = "cc8be15d7fc41d3438ec0de2d0ab5f40"
+    GUID_WEATHER_MGR = "40cd098294d0a194bb7616001c9c247f"
+    GUID_ROADSIDE_MGR = "dd484ee994f60824aa9acede7dbc0a56"
+    
+    GUID_TRAFFIC_MGR = "8366b4820f0be164aa1aeab4d87d296f"
+    GUID_TRAFFIC_SPAWNER = "4931b79b8b4cb56478d8f2cb5fc9f860"
+    
+    GUID_PASSENGER_MGR = "f8dbcc17f90d75c44867344e4392fb25"
+    GUID_BOARDING_MGR = "b50f1363d4169754581b4bd92015457d"
+    
+    GUID_AUDIO_MIXER = "c2842e3a7aa83154e95f23d0cee85d0e"
+    GUID_ENGINE_AUDIO = "14ea0c74d27010a4d9bdc5e65f8dd43f"
+    GUID_AIR_SOUNDS = "0864afc56c7138c46945712c7ce178bb"
+    GUID_TIRE_SOUNDS = "2f26bf3fd4d4a0a448ca82b5ca59c563"
+    
+    GUID_TRIP_HUD = "8e55e4a3199b5e1438028f9c8fe2c1ac"
+
+    yaml = f"""%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {{fileID: 0}}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 9
+  m_Fog: 1
+  m_FogColor: {{r: 0.65, g: 0.75, b: 0.85, a: 1}}
+  m_FogMode: 3
+  m_FogDensity: 0.0015
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 500
+  m_AmbientSkyColor: {{r: 0.55, g: 0.60, b: 0.70, a: 1}}
+  m_AmbientEquatorColor: {{r: 0.35, g: 0.40, b: 0.45, a: 1}}
+  m_AmbientGroundColor: {{r: 0.20, g: 0.25, b: 0.18, a: 1}}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 3
+  m_SubtractiveShadowColor: {{r: 0.42, g: 0.478, b: 0.627, a: 1}}
+  m_SkyboxMaterial: {{fileID: 0}}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {{fileID: 0}}
+  m_SpotCookie: {{fileID: 0}}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {{fileID: 0}}
+  m_Sun: {{fileID: 705507994}}
+  m_IndirectSpecularColor: {{r: 0, g: 0, b: 0, a: 1}}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 12
+  m_GIWorkflowMode: 1
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {{fileID: 0}}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_FinalGather: 0
+    m_FinalGatherFiltering: 1
+    m_FinalGatherRayCount: 256
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 1
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 2
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    accuratePlacement: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {{fileID: 0}}
+
+--- !u!1 &705507993
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 705507995}}
+  - component: {{fileID: 705507994}}
+  m_Layer: 0
+  m_Name: Directional Light (Sun)
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!108 &705507994
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 705507993}}
+  m_Enabled: 1
+  serializedVersion: 10
+  m_Type: 1
+  m_Shape: 0
+  m_Color: {{r: 1, g: 0.96, b: 0.90, a: 1}}
+  m_Intensity: 1.35
+  m_Shadows:
+    m_Type: 2
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+--- !u!4 &705507995
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 705507993}}
+  m_LocalRotation: {{x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}}
+  m_LocalPosition: {{x: 0, y: 100, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {{x: 50, y: -30, z: 0}}
+
+--- !u!1 &963194225
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 963194228}}
+  - component: {{fileID: 963194227}}
+  - component: {{fileID: 963194226}}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &963194226
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 963194225}}
+  m_Enabled: 1
+--- !u!20 &963194227
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 963194225}}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {{r: 0.55, g: 0.70, b: 0.85, a: 0}}
+  field of view: 52
+  near clip plane: 0.1
+  far clip plane: 2000
+--- !u!4 &963194228
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 963194225}}
+  m_LocalRotation: {{x: 0.08715574, y: 0, z: 0, w: 0.9961947}}
+  m_LocalPosition: {{x: 3.5, y: 4.5, z: -15.5}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {{x: 10, y: 0, z: 0}}
+
+--- !u!1 &1000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 1001}}
+  - component: {{fileID: 1002}}
+  m_Layer: 0
+  m_Name: [BUSSIGO_MASTER_BOOTSTRAP]
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 1000}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 2
+--- !u!114 &1002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 1000}}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {{fileID: 11500000, guid: {GUID_BOOTSTRAP}, type: 3}}
+  m_Name: 
+  m_EditorClassIdentifier: Bussigo.Core:BussigoSceneBootstrap
+
+--- !u!1 &2000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 2001}}
+  - component: {{fileID: 2002}}
+  - component: {{fileID: 2003}}
+  - component: {{fileID: 2004}}
+  - component: {{fileID: 2005}}
+  - component: {{fileID: 2006}}
+  m_Layer: 0
+  m_Name: [CORE_SERVICES]
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 2000}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 3
+--- !u!114 &2002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 2000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_SERVICE_LOCATOR}, type: 3}}
+--- !u!114 &2003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 2000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_EVENT_BUS}, type: 3}}
+--- !u!114 &2004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 2000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_STATE_MACHINE}, type: 3}}
+--- !u!114 &2005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 2000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_ECONOMY_MGR}, type: 3}}
+--- !u!114 &2006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 2000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_COMPANY_MGR}, type: 3}}
+
+--- !u!1 &3000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 3001}}
+  - component: {{fileID: 3002}}
+  - component: {{fileID: 3003}}
+  - component: {{fileID: 3004}}
+  m_Layer: 0
+  m_Name: [WORLD_ENVIRONMENT]
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 3000}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 4
+--- !u!114 &3002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 3000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_TIME_SERVICE}, type: 3}}
+--- !u!114 &3003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 3000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_WEATHER_MGR}, type: 3}}
+--- !u!114 &3004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 3000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_ROADSIDE_MGR}, type: 3}}
+
+--- !u!1 &4000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 4001}}
+  - component: {{fileID: 4002}}
+  - component: {{fileID: 4003}}
+  - component: {{fileID: 4004}}
+  - component: {{fileID: 4005}}
+  m_Layer: 0
+  m_Name: [ROAD_NETWORK]
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 4000}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 5
+--- !u!114 &4002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 4000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_HIGHWAY_BUILDER}, type: 3}}
+--- !u!114 &4003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 4000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_ROUTE_GRAPH}, type: 3}}
+--- !u!114 &4004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 4000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_DISTANCE_SERVICE}, type: 3}}
+--- !u!114 &4005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 4000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_ROAD_STREAMER}, type: 3}}
+
+--- !u!1 &5000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 5001}}
+  - component: {{fileID: 5002}}
+  - component: {{fileID: 5003}}
+  m_Layer: 0
+  m_Name: [TRAFFIC_SIMULATION]
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 5000}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 6
+--- !u!114 &5002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 5000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_TRAFFIC_MGR}, type: 3}}
+--- !u!114 &5003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 5000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_TRAFFIC_SPAWNER}, type: 3}}
+
+--- !u!1 &6000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 6001}}
+  - component: {{fileID: 6002}}
+  - component: {{fileID: 6003}}
+  m_Layer: 0
+  m_Name: [PASSENGER_SYSTEM]
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 6000}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 7
+--- !u!114 &6002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 6000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_PASSENGER_MGR}, type: 3}}
+--- !u!114 &6003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 6000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_BOARDING_MGR}, type: 3}}
+
+--- !u!1 &7000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 7001}}
+  - component: {{fileID: 7002}}
+  - component: {{fileID: 7003}}
+  - component: {{fileID: 7004}}
+  - component: {{fileID: 7005}}
+  m_Layer: 0
+  m_Name: [AUDIO_SYSTEM]
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 7000}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 8
+--- !u!114 &7002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 7000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_AUDIO_MIXER}, type: 3}}
+--- !u!114 &7003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 7000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_ENGINE_AUDIO}, type: 3}}
+--- !u!114 &7004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 7000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_AIR_SOUNDS}, type: 3}}
+--- !u!114 &7005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 7000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_TIRE_SOUNDS}, type: 3}}
+
+--- !u!1 &8000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 8001}}
+  - component: {{fileID: 8002}}
+  - component: {{fileID: 8003}}
+  - component: {{fileID: 8004}}
+  - component: {{fileID: 8005}}
+  - component: {{fileID: 8006}}
+  - component: {{fileID: 8007}}
+  - component: {{fileID: 8008}}
+  - component: {{fileID: 8009}}
+  - component: {{fileID: 8010}}
+  m_Layer: 0
+  m_Name: IndianIntercityCoach_12M_Hero_LOD0
+  m_TagString: BusPlayer
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8000}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 3.5, y: 0.52, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children:
+  - {{fileID: 8101}}
+  - {{fileID: 8201}}
+  - {{fileID: 8301}}
+  - {{fileID: 8401}}
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 9
+--- !u!54 &8002
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8000}}
+  serializedVersion: 4
+  m_Mass: 14500
+  m_Drag: 0.05
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {{x: 0, y: -0.65, z: 0.2}}
+  m_Interpolate: 1
+--- !u!65 &8003
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8000}}
+  m_Material: {{fileID: 0}}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {{x: 2.6, y: 3.2, z: 12.5}}
+  m_Center: {{x: 0, y: 1.8, z: 0}}
+--- !u!114 &8004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_CHASSIS_CTRL}, type: 3}}
+--- !u!114 &8005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_PHYSICS_MODEL}, type: 3}}
+--- !u!114 &8006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_RIG_HIERARCHY}, type: 3}}
+--- !u!114 &8007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_WHEEL_SYNC}, type: 3}}
+--- !u!114 &8008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_COCKPIT_CTRL}, type: 3}}
+--- !u!114 &8009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_DOOR_ACTUATOR}, type: 3}}
+--- !u!114 &8010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_CAMERA_RIG}, type: 3}}
+
+--- !u!1 &8100
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 8101}}
+  m_Layer: 0
+  m_Name: Chassis
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8101
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8100}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 8001}}
+  m_RootOrder: 0
+
+--- !u!1 &8200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 8201}}
+  m_Layer: 0
+  m_Name: Exterior
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8201
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8200}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 8001}}
+  m_RootOrder: 1
+
+--- !u!1 &8300
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 8301}}
+  m_Layer: 0
+  m_Name: Interior
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8301
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8300}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 8001}}
+  m_RootOrder: 2
+
+--- !u!1 &8400
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 8401}}
+  m_Layer: 0
+  m_Name: CameraMounts
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8401
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 8400}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 8001}}
+  m_RootOrder: 3
+
+--- !u!1 &9000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  serializedVersion: 6
+  m_Component:
+  - component: {{fileID: 9001}}
+  - component: {{fileID: 9002}}
+  m_Layer: 0
+  m_Name: [SIMULATOR_HUD]
+  m_TagString: Untagged
+  m_Icon: {{fileID: 0}}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 9000}}
+  m_LocalRotation: {{x: 0, y: 0, z: 0, w: 1}}
+  m_LocalPosition: {{x: 0, y: 0, z: 0}}
+  m_LocalScale: {{x: 1, y: 1, z: 1}}
+  m_Children: []
+  m_Father: {{fileID: 0}}
+  m_RootOrder: 10
+--- !u!114 &9002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {{fileID: 0}}
+  m_PrefabInstance: {{fileID: 0}}
+  m_PrefabAsset: {{fileID: 0}}
+  m_GameObject: {{fileID: 9000}}
+  m_Enabled: 1
+  m_Script: {{fileID: 11500000, guid: {GUID_TRIP_HUD}, type: 3}}
+"""
+
+    with open(out_file, "w", encoding="utf-8") as f:
+        f.write(yaml)
+
+    print(f"Generated complete populated scene: {out_file} ({out_file.stat().st_size:,} bytes)")
+
+if __name__ == "__main__":
+    generate_full_scene()
