@@ -3,13 +3,6 @@ using System.Collections.Generic;
 
 namespace Bussigo.Game.Economy
 {
-    public struct JournalEntryLine
-    {
-        public string AccountCode;
-        public string AccountTitle;
-        public float DebitAmount;
-        public float CreditAmount;
-    }
 
     public class FinancialAccountingJournal02
     {
