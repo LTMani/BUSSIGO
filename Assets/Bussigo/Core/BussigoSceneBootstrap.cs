@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using Bussigo.Core;
 using Bussigo.Vehicle;
 using Bussigo.Physics;
 using Bussigo.Route;
@@ -18,51 +17,52 @@ namespace Bussigo.Core
 {
     /// <summary>
     /// Master Scene Bootstrapper for BUSSIGO V2.
-    /// Orchestrates service initialization, Hero Bus instantiation, highway network streaming,
-    /// traffic AI, monsoon weather, 44-seat passenger queues, audio mixer, and simulator HUD on scene launch.
+    /// Orchestrates service initialization, pure C# domain services, Hero Bus instantiation, highway network streaming,
+    /// traffic AI, dynamic weather, 44-seat passenger queues, audio mixer, and simulator HUD on scene launch.
     /// </summary>
     public class BussigoSceneBootstrap : MonoBehaviour
     {
-        [Header("Root Systems & Services")]
+        [Header("Root Systems & Services (MonoBehaviours)")]
         public EconomyManager economyManager;
         public CompanyManager companyManager;
         public SaveSystem saveSystem;
 
-        [Header("World & Environment")]
+        [Header("World & Environment (MonoBehaviours)")]
         public TimeOfDayService timeOfDayService;
         public DynamicWeatherManager weatherManager;
         public RoadsideInfrastructureManager roadsideManager;
 
         [Header("Route & Highway Network")]
-        public RouteGraph routeGraph;
-        public RouteDistanceService distanceService;
         public RoadSegmentStreamer roadStreamer;
 
-        [Header("Traffic AI & Simulation")]
+        [Header("Traffic AI & Simulation (MonoBehaviours)")]
         public TrafficManager trafficManager;
         public TrafficSpawner trafficSpawner;
 
-        [Header("Passenger Logistics")]
+        [Header("Passenger Logistics (MonoBehaviours)")]
         public PassengerManager passengerManager;
-        public BoardingManager boardingManager;
 
-        [Header("Audio System")]
+        [Header("Audio System (MonoBehaviours)")]
         public BusAudioMixerController audioMixer;
         public MultiLayerEngineAudio engineAudio;
         public PneumaticAirSoundController airSounds;
         public TireRoadNoiseController tireSounds;
 
-        [Header("Player Hero Bus")]
+        [Header("Player Hero Bus (MonoBehaviours)")]
         public GameObject heroBusInstance;
         public BusChassisController chassisController;
-        public HeavyVehiclePhysicsModel physicsModel;
+        public BusModelRigHierarchy rigHierarchy;
         public BusWheelVisualSync wheelSync;
         public BusCockpitController cockpitController;
         public BusDoorActuator doorActuator;
         public BusCameraRig cameraRig;
 
-        [Header("User Interface")]
+        [Header("User Interface (MonoBehaviours)")]
         public TripHUDController tripHUD;
+
+        // Pure C# Domain Services (Runtime non-serialized)
+        [NonSerialized] public RouteGraph routeGraph;
+        [NonSerialized] public RouteDistanceService distanceService;
 
         private void Awake()
         {
@@ -70,9 +70,22 @@ namespace Bussigo.Core
             Debug.Log("          BUSSIGO V2 -- MASTER PLAYABLE SCENE BOOTSTRAP INITIALIZING            ");
             Debug.Log("================================================================================");
 
+            // 1. Core Services
             EnsureCoreServices();
-            EnsureWorldAndRoute();
+
+            // 2. Pure C# Route Graph & Distance Service
+            EnsureRouteNetwork();
+
+            // 3. World & Environment
+            EnsureWorldEnvironment();
+
+            // 4. Passenger Logistics & Traffic AI
+            EnsureLogisticsAndTraffic();
+
+            // 5. Player Hero Bus Rig & Physical Components
             EnsureHeroBus();
+
+            // 6. Acoustic Audio & Simulator HUD
             EnsureAudioAndHUD();
 
             Debug.Log("[BUSSIGO Bootstrap] All V2 Subsystems Successfully Initialized & Connected!");
@@ -93,31 +106,39 @@ namespace Bussigo.Core
             ServiceLocator.Register<SaveSystem>(saveSystem);
         }
 
-        private void EnsureWorldAndRoute()
+        private void EnsureRouteNetwork()
+        {
+            // Pure C# data-driven route topology
+            routeGraph = NH65HighwayNetworkBuilder.BuildCorridorGraph();
+
+            // Pure C# distance computation service
+            distanceService = new RouteDistanceService();
+            distanceService.Initialize();
+            distanceService.SetActiveGraph(routeGraph);
+
+            // Unity Component road streamer
+            if (roadStreamer == null) roadStreamer = FindOrCreate<RoadSegmentStreamer>("[ROAD_NETWORK]");
+        }
+
+        private void EnsureWorldEnvironment()
         {
             if (timeOfDayService == null) timeOfDayService = FindOrCreate<TimeOfDayService>("[WORLD_ENVIRONMENT]");
             if (weatherManager == null) weatherManager = FindOrCreate<DynamicWeatherManager>("[WORLD_ENVIRONMENT]");
             if (roadsideManager == null) roadsideManager = FindOrCreate<RoadsideInfrastructureManager>("[WORLD_ENVIRONMENT]");
 
-            if (routeGraph == null) routeGraph = FindOrCreate<RouteGraph>("[ROAD_NETWORK]");
-            if (distanceService == null) distanceService = FindOrCreate<RouteDistanceService>("[ROAD_NETWORK]");
-            if (roadStreamer == null) roadStreamer = FindOrCreate<RoadSegmentStreamer>("[ROAD_NETWORK]");
-
-            if (trafficManager == null) trafficManager = FindOrCreate<TrafficManager>("[TRAFFIC_SIMULATION]");
-            if (trafficSpawner == null) trafficSpawner = FindOrCreate<TrafficSpawner>("[TRAFFIC_SIMULATION]");
-
-            if (passengerManager == null) passengerManager = FindOrCreate<PassengerManager>("[PASSENGER_SYSTEM]");
-            if (boardingManager == null) boardingManager = FindOrCreate<BoardingManager>("[PASSENGER_SYSTEM]");
-
             timeOfDayService.Initialize();
             weatherManager.Initialize();
             roadsideManager.InitializeCorridorInfrastructure();
+        }
 
-            // Populate RouteGraph via static NH65 Highway Builder
-            routeGraph = NH65HighwayNetworkBuilder.BuildCorridorGraph();
-            distanceService.Initialize();
-            trafficManager.Initialize();
+        private void EnsureLogisticsAndTraffic()
+        {
+            if (passengerManager == null) passengerManager = FindOrCreate<PassengerManager>("[PASSENGER_SYSTEM]");
             passengerManager.Initialize();
+
+            if (trafficManager == null) trafficManager = FindOrCreate<TrafficManager>("[TRAFFIC_SIMULATION]");
+            if (trafficSpawner == null) trafficSpawner = FindOrCreate<TrafficSpawner>("[TRAFFIC_SIMULATION]");
+            trafficManager.Initialize();
         }
 
         private void EnsureHeroBus()
@@ -139,20 +160,29 @@ namespace Bussigo.Core
             }
 
             chassisController = GetOrAdd<BusChassisController>(heroBusInstance);
-            physicsModel = GetOrAdd<HeavyVehiclePhysicsModel>(heroBusInstance);
+            rigHierarchy = GetOrAdd<BusModelRigHierarchy>(heroBusInstance);
             wheelSync = GetOrAdd<BusWheelVisualSync>(heroBusInstance);
             cockpitController = GetOrAdd<BusCockpitController>(heroBusInstance);
             doorActuator = GetOrAdd<BusDoorActuator>(heroBusInstance);
             cameraRig = GetOrAdd<BusCameraRig>(heroBusInstance);
 
-            // Connect vehicle references
-            chassisController.physicsModel = physicsModel;
-            chassisController.doorActuator = doorActuator;
+            // Connect vehicle component references
             wheelSync.chassisController = chassisController;
+            wheelSync.rigHierarchy = rigHierarchy;
+
             cockpitController.chassisController = chassisController;
+            cockpitController.rigHierarchy = rigHierarchy;
+
             doorActuator.chassisController = chassisController;
-            cameraRig.targetBus = heroBusInstance.transform;
-            cameraRig.chassis = chassisController;
+            doorActuator.rigHierarchy = rigHierarchy;
+
+            cameraRig.targetCamera = Camera.main ?? UnityEngine.Object.FindAnyObjectByType<Camera>();
+            cameraRig.rigHierarchy = rigHierarchy;
+
+            if (passengerManager != null)
+            {
+                passengerManager.playerBus = chassisController;
+            }
         }
 
         private void EnsureAudioAndHUD()

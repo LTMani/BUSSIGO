@@ -21,7 +21,7 @@ namespace Bussigo.Route
                 isBarrierOpen = true;
                 if (BussigoGameManager.Instance != null)
                 {
-                    BussigoGameManager.Instance.DeductFastagToll(tollFeeINR);
+                    BussigoGameManager.Instance.DeductFastagToll(tollPlazaName, tollFeeINR);
                 }
                 Debug.Log($"[FASTag] RFID Scanned at {tollPlazaName}. ₹{tollFeeINR} deducted.");
             }

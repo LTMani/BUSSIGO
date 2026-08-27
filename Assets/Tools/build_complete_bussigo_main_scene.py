@@ -14,15 +14,12 @@ Serializes the full, complete GameObject hierarchy and component wiring:
    - DynamicWeatherManager
    - RoadsideInfrastructureManager
 6. [ROAD_NETWORK]
-   - RouteGraph
-   - RouteDistanceService
    - RoadSegmentStreamer
 7. [TRAFFIC_SIMULATION]
    - TrafficManager
    - TrafficSpawner
 8. [PASSENGER_SYSTEM]
    - PassengerManager
-   - BoardingManager
 9. [AUDIO_SYSTEM]
    - BusAudioMixerController
    - MultiLayerEngineAudio
@@ -32,7 +29,6 @@ Serializes the full, complete GameObject hierarchy and component wiring:
    - Rigidbody (14500 kg)
    - BoxCollider (2.6 x 3.2 x 12.5m)
    - BusChassisController
-   - HeavyVehiclePhysicsModel
    - BusModelRigHierarchy
    - BusWheelVisualSync
    - BusCockpitController
@@ -73,15 +69,12 @@ def generate_full_scene():
     GUID_SAVE_SYSTEM = "436b9e37f6f7b6c49b54897814097510"
     
     GUID_CHASSIS_CTRL = "8560d12690ab9bd4cbc131d7e10bfd7f"
-    GUID_PHYSICS_MODEL = "00eadd3ad94054548a50ba2d010e41d6"
     GUID_RIG_HIERARCHY = "2fbdfcd720cf378409bc80ec118610ba"
     GUID_WHEEL_SYNC = "fc7def3d5982e6d4a83489b4ae61e31b"
     GUID_COCKPIT_CTRL = "9d02839343186f34bbbe34f4909c16a3"
     GUID_DOOR_ACTUATOR = "ac1ab745f67979742b97ceb7e069bed6"
     GUID_CAMERA_RIG = "ffc3aeeff4a7a2d4792ef8705a95af02"
     
-    GUID_ROUTE_GRAPH = "056ce71af7855e3478040da3089143c9"
-    GUID_DISTANCE_SERVICE = "b020ce2e0c8a80d479ad673ca6ec7b51"
     GUID_ROAD_STREAMER = "b5a6f6e707f6fdb4dbdf17a8e18abd0d"
     
     GUID_TIME_SERVICE = "cc8be15d7fc41d3438ec0de2d0ab5f40"
@@ -92,7 +85,6 @@ def generate_full_scene():
     GUID_TRAFFIC_SPAWNER = "4931b79b8b4cb56478d8f2cb5fc9f860"
     
     GUID_PASSENGER_MGR = "f8dbcc17f90d75c44867344e4392fb25"
-    GUID_BOARDING_MGR = "b50f1363d4169754581b4bd92015457d"
     
     GUID_AUDIO_MIXER = "c2842e3a7aa83154e95f23d0cee85d0e"
     GUID_ENGINE_AUDIO = "14ea0c74d27010a4d9bdc5e65f8dd43f"
@@ -482,8 +474,6 @@ GameObject:
   m_Component:
   - component: {{fileID: 4001}}
   - component: {{fileID: 4002}}
-  - component: {{fileID: 4003}}
-  - component: {{fileID: 4004}}
   m_Layer: 0
   m_Name: [ROAD_NETWORK]
   m_TagString: Untagged
@@ -505,24 +495,6 @@ Transform:
   m_Father: {{fileID: 0}}
   m_RootOrder: 5
 --- !u!114 &4002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {{fileID: 0}}
-  m_PrefabInstance: {{fileID: 0}}
-  m_PrefabAsset: {{fileID: 0}}
-  m_GameObject: {{fileID: 4000}}
-  m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_ROUTE_GRAPH}, type: 3}}
---- !u!114 &4003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {{fileID: 0}}
-  m_PrefabInstance: {{fileID: 0}}
-  m_PrefabAsset: {{fileID: 0}}
-  m_GameObject: {{fileID: 4000}}
-  m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_DISTANCE_SERVICE}, type: 3}}
---- !u!114 &4004
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {{fileID: 0}}
@@ -592,7 +564,6 @@ GameObject:
   m_Component:
   - component: {{fileID: 6001}}
   - component: {{fileID: 6002}}
-  - component: {{fileID: 6003}}
   m_Layer: 0
   m_Name: [PASSENGER_SYSTEM]
   m_TagString: Untagged
@@ -622,15 +593,6 @@ MonoBehaviour:
   m_GameObject: {{fileID: 6000}}
   m_Enabled: 1
   m_Script: {{fileID: 11500000, guid: {GUID_PASSENGER_MGR}, type: 3}}
---- !u!114 &6003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {{fileID: 0}}
-  m_PrefabInstance: {{fileID: 0}}
-  m_PrefabAsset: {{fileID: 0}}
-  m_GameObject: {{fileID: 6000}}
-  m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_BOARDING_MGR}, type: 3}}
 
 --- !u!1 &7000
 GameObject:
@@ -719,7 +681,6 @@ GameObject:
   - component: {{fileID: 8007}}
   - component: {{fileID: 8008}}
   - component: {{fileID: 8009}}
-  - component: {{fileID: 8010}}
   m_Layer: 0
   m_Name: IndianIntercityCoach_12M_Hero_LOD0
   m_TagString: BusPlayer
@@ -795,7 +756,7 @@ MonoBehaviour:
   m_PrefabAsset: {{fileID: 0}}
   m_GameObject: {{fileID: 8000}}
   m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_PHYSICS_MODEL}, type: 3}}
+  m_Script: {{fileID: 11500000, guid: {GUID_RIG_HIERARCHY}, type: 3}}
 --- !u!114 &8006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -804,7 +765,7 @@ MonoBehaviour:
   m_PrefabAsset: {{fileID: 0}}
   m_GameObject: {{fileID: 8000}}
   m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_RIG_HIERARCHY}, type: 3}}
+  m_Script: {{fileID: 11500000, guid: {GUID_WHEEL_SYNC}, type: 3}}
 --- !u!114 &8007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -813,7 +774,7 @@ MonoBehaviour:
   m_PrefabAsset: {{fileID: 0}}
   m_GameObject: {{fileID: 8000}}
   m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_WHEEL_SYNC}, type: 3}}
+  m_Script: {{fileID: 11500000, guid: {GUID_COCKPIT_CTRL}, type: 3}}
 --- !u!114 &8008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -822,17 +783,8 @@ MonoBehaviour:
   m_PrefabAsset: {{fileID: 0}}
   m_GameObject: {{fileID: 8000}}
   m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_COCKPIT_CTRL}, type: 3}}
---- !u!114 &8009
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {{fileID: 0}}
-  m_PrefabInstance: {{fileID: 0}}
-  m_PrefabAsset: {{fileID: 0}}
-  m_GameObject: {{fileID: 8000}}
-  m_Enabled: 1
   m_Script: {{fileID: 11500000, guid: {GUID_DOOR_ACTUATOR}, type: 3}}
---- !u!114 &8010
+--- !u!114 &8009
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {{fileID: 0}}
