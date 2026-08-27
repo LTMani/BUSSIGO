@@ -9,25 +9,25 @@ namespace Bussigo.Game.Routes
         public static HighwayCorridor BuildInterstateCorridor()
         {
             var corridor = new HighwayCorridor(
-                "COR-INTERSTATE-014",
+                "COR-INTERSTATE-14",
                 "South Indian Capital Hub 14",
                 "Interstate Terminal Hub 14",
-                355.0f,
-                6.28f,
-                430.0f
+                325.0f,
+                3.62f,
+                360.0f
             );
 
             for (int w = 1; w <= 14; w++)
             {
-                double lat = 13.0 + (cr_idx * 0.09) + (w * 0.038);
-                double lon = 77.5 + (cr_idx * 0.11) + (w * 0.045);
+                double lat = 13.0 + (14 * 0.09) + (w * 0.038);
+                double lon = 77.5 + (14 * 0.11) + (w * 0.045);
                 double elev = 45.0 + (w * 22.0);
                 float spd = (w % 3 == 0) ? 60.0f : 80.0f;
                 bool isStop = (w == 1 || w == 7 || w == 14);
 
                 corridor.AddWaypoint(new RouteWaypoint(
-                    $"WP-INTERSTATE-014-W{w:D2}",
-                    $"Interstate Node 014-{w:D2}",
+                    $"WP-INTERSTATE-14-W{w:D2}",
+                    $"Interstate Node 14-{w:D2}",
                     lat,
                     lon,
                     elev,
