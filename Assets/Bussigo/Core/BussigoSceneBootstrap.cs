@@ -12,6 +12,8 @@ using Bussigo.Company;
 using Bussigo.Save;
 using Bussigo.UI;
 using Bussigo.World;
+using Bussigo.Game.Runtime3D.Vehicle;
+using Bussigo.Game.Runtime3D.Environment;
 
 namespace Bussigo.Core
 {
@@ -129,6 +131,15 @@ namespace Bussigo.Core
             timeOfDayService.Initialize();
             weatherManager.Initialize();
             roadsideManager.InitializeCorridorInfrastructure();
+
+            // Ensure 3D Highway Corridor, Terminals, and Roadside Scenery exist
+            var worldGo = GameObject.Find("[WORLD_ENVIRONMENT]");
+            if (worldGo != null && GameObject.Find("HighwayCorridor_NH65") == null)
+            {
+                var worldBuilder = worldGo.GetComponent<ProceduralSouthIndiaWorldBuilder>();
+                if (worldBuilder == null) worldBuilder = worldGo.AddComponent<ProceduralSouthIndiaWorldBuilder>();
+                worldBuilder.GenerateWorld(worldGo.transform);
+            }
         }
 
         private void EnsureLogisticsAndTraffic()
@@ -165,6 +176,23 @@ namespace Bussigo.Core
             cockpitController = GetOrAdd<BusCockpitController>(heroBusInstance);
             doorActuator = GetOrAdd<BusDoorActuator>(heroBusInstance);
             cameraRig = GetOrAdd<BusCameraRig>(heroBusInstance);
+            GetOrAdd<Bussigo.InputSystem.UnifiedInputManager>(heroBusInstance).targetBus = chassisController;
+
+            // Ensure rig hierarchy transforms (camera mounts, wheels, steering wheel, glider door)
+            EnsureRigHierarchyTransforms(heroBusInstance, rigHierarchy);
+
+            // Ensure 3D Visual Mesh is attached if not already present
+            if (heroBusInstance.GetComponentInChildren<MeshRenderer>() == null)
+            {
+                var meshBuilder = heroBusInstance.AddComponent<ProceduralBusMeshBuilder>();
+                var visualModel = meshBuilder.BuildProceduralBus(heroBusInstance.transform.position, heroBusInstance.transform.rotation, BusCategoryType.SuperLuxuryRecliner);
+                visualModel.transform.SetParent(heroBusInstance.transform, true);
+                visualModel.name = "HeroBusVisualModel";
+                var childRb = visualModel.GetComponent<Rigidbody>();
+                if (childRb != null) Destroy(childRb);
+                var childCtrl = visualModel.GetComponent<UnityBusController3D>();
+                if (childCtrl != null) Destroy(childCtrl);
+            }
 
             // Connect vehicle component references
             wheelSync.chassisController = chassisController;
@@ -176,13 +204,121 @@ namespace Bussigo.Core
             doorActuator.chassisController = chassisController;
             doorActuator.rigHierarchy = rigHierarchy;
 
-            cameraRig.targetCamera = Camera.main ?? UnityEngine.Object.FindAnyObjectByType<Camera>();
+            var mainCam = Camera.main ?? UnityEngine.Object.FindAnyObjectByType<Camera>();
+            if (mainCam != null)
+            {
+                cameraRig.targetCamera = mainCam;
+            }
             cameraRig.rigHierarchy = rigHierarchy;
 
             if (passengerManager != null)
             {
                 passengerManager.playerBus = chassisController;
             }
+        }
+
+        private void EnsureRigHierarchyTransforms(GameObject busRoot, BusModelRigHierarchy rig)
+        {
+            Transform chassisGo = busRoot.transform.Find("Chassis");
+            if (chassisGo == null)
+            {
+                chassisGo = new GameObject("Chassis").transform;
+                chassisGo.SetParent(busRoot.transform, false);
+            }
+            rig.chassisRoot = chassisGo;
+
+            Transform exteriorGo = busRoot.transform.Find("Exterior");
+            if (exteriorGo == null)
+            {
+                exteriorGo = new GameObject("Exterior").transform;
+                exteriorGo.SetParent(busRoot.transform, false);
+            }
+            rig.exteriorRoot = exteriorGo;
+
+            Transform interiorGo = busRoot.transform.Find("Interior");
+            if (interiorGo == null)
+            {
+                interiorGo = new GameObject("Interior").transform;
+                interiorGo.SetParent(busRoot.transform, false);
+            }
+            rig.interiorRoot = interiorGo;
+
+            Transform cockpitGo = interiorGo.Find("Cockpit");
+            if (cockpitGo == null)
+            {
+                cockpitGo = new GameObject("Cockpit").transform;
+                cockpitGo.SetParent(interiorGo, false);
+            }
+            rig.cockpitRoot = cockpitGo;
+
+            Transform steerGo = cockpitGo.Find("SteeringWheel");
+            if (steerGo == null)
+            {
+                steerGo = new GameObject("SteeringWheel").transform;
+                steerGo.SetParent(cockpitGo, false);
+                steerGo.localPosition = new Vector3(-0.60f, 1.65f, 5.15f);
+            }
+            rig.steeringWheelTransform = steerGo;
+
+            Transform doorGo = exteriorGo.Find("FrontGliderDoor");
+            if (doorGo == null)
+            {
+                doorGo = new GameObject("FrontGliderDoor").transform;
+                doorGo.SetParent(exteriorGo, false);
+                doorGo.localPosition = new Vector3(1.29f, 0.55f, 4.40f);
+            }
+            rig.frontGliderDoorTransform = doorGo;
+
+            Transform wheelsRoot = chassisGo.Find("Wheels");
+            if (wheelsRoot == null)
+            {
+                wheelsRoot = new GameObject("Wheels").transform;
+                wheelsRoot.SetParent(chassisGo, false);
+            }
+
+            Transform FindOrCreateChild(Transform parent, string name, Vector3 localPos)
+            {
+                Transform child = parent.Find(name);
+                if (child == null)
+                {
+                    child = new GameObject(name).transform;
+                    child.SetParent(parent, false);
+                    child.localPosition = localPos;
+                }
+                return child;
+            }
+
+            rig.wheelFrontLeft = FindOrCreateChild(wheelsRoot, "FrontLeft", new Vector3(-1.15f, 0.52f, 3.60f));
+            rig.wheelFrontRight = FindOrCreateChild(wheelsRoot, "FrontRight", new Vector3(1.15f, 0.52f, 3.60f));
+            rig.wheelRearLeftOuter = FindOrCreateChild(wheelsRoot, "RearLeftOuter", new Vector3(-1.22f, 0.52f, -3.20f));
+            rig.wheelRearLeftInner = FindOrCreateChild(wheelsRoot, "RearLeftInner", new Vector3(-0.90f, 0.52f, -3.20f));
+            rig.wheelRearRightInner = FindOrCreateChild(wheelsRoot, "RearRightInner", new Vector3(0.90f, 0.52f, -3.20f));
+            rig.wheelRearRightOuter = FindOrCreateChild(wheelsRoot, "RearRightOuter", new Vector3(1.22f, 0.52f, -3.20f));
+
+            Transform cameraMounts = busRoot.transform.Find("CameraMounts");
+            if (cameraMounts == null)
+            {
+                cameraMounts = new GameObject("CameraMounts").transform;
+                cameraMounts.SetParent(busRoot.transform, false);
+            }
+
+            Transform FindOrCreateMount(Transform parent, string name, Vector3 localPos, Quaternion localRot)
+            {
+                Transform mount = parent.Find(name);
+                if (mount == null)
+                {
+                    mount = new GameObject(name).transform;
+                    mount.SetParent(parent, false);
+                    mount.localPosition = localPos;
+                    mount.localRotation = localRot;
+                }
+                return mount;
+            }
+
+            rig.cameraMountChase = FindOrCreateMount(cameraMounts, "Mount_ExteriorChase", new Vector3(0f, 4.2f, -12.5f), Quaternion.Euler(14f, 0f, 0f));
+            rig.cameraMountBumper = FindOrCreateMount(cameraMounts, "Mount_FrontBumper", new Vector3(0f, 0.85f, 6.45f), Quaternion.identity);
+            rig.cameraMountCockpitDriverEye = FindOrCreateMount(cameraMounts, "Mount_DriverEye", new Vector3(-0.60f, 2.15f, 4.75f), Quaternion.identity);
+            rig.cameraMountPassengerCabin = FindOrCreateMount(cameraMounts, "Mount_PassengerCabin", new Vector3(0f, 2.35f, 1.20f), Quaternion.identity);
         }
 
         private void EnsureAudioAndHUD()

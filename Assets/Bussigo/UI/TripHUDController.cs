@@ -88,5 +88,29 @@ namespace Bussigo.UI
                 weatherName = weather
             };
         }
+
+        private void OnGUI()
+        {
+            // Top Header: Route & Time
+            GUI.Box(new Rect(10, 10, 440, 95), "");
+            GUI.Label(new Rect(20, 15, 420, 25), $"<b><size=14>BUSSIGO ROYAL TRAVELS -- NH65 HIGHWAY CORRIDOR</size></b>");
+            GUI.Label(new Rect(20, 38, 420, 20), $"Route: <b>{CurrentState.currentLocation}</b>  -->  <b>{CurrentState.destination}</b>");
+            GUI.Label(new Rect(20, 58, 420, 20), $"Distance: <b>{CurrentState.traveledDistanceKm:F1} km</b> traveled | <b>{CurrentState.remainingDistanceKm:F1} km</b> remaining");
+            GUI.Label(new Rect(20, 78, 420, 20), $"Time: <b>{CurrentState.timeOfDayString}</b> | Weather: <b>{CurrentState.weatherName}</b> | Cash: <color=#90EE90>₹{CurrentState.companyBalanceRupees:N0}</color>");
+
+            // Bottom Center: Cockpit Cluster
+            float screenW = Screen.width;
+            float screenH = Screen.height;
+            float clusterW = 580;
+            float clusterH = 110;
+            float clusterX = (screenW - clusterW) * 0.5f;
+            float clusterY = screenH - clusterH - 15;
+
+            GUI.Box(new Rect(clusterX, clusterY, clusterW, clusterH), "");
+            GUI.Label(new Rect(clusterX + 15, clusterY + 10, 550, 28), $"<size=18><b>SPEED: {CurrentState.speedKmh:F0} km/h</b>   |   <b>GEAR: D{CurrentState.currentGear}</b>   |   <b>RPM: {CurrentState.engineRpm:F0}</b></size>");
+            GUI.Label(new Rect(clusterX + 15, clusterY + 40, 550, 22), $"Air Pressure: <b>{CurrentState.airPressureBar:F1} bar</b> {(CurrentState.airPressureBar < 6.5f ? "<color=red>[LOW AIR]</color>" : "<color=green>[OPTIMAL]</color>")}   |   Retarder: <b>Stage {CurrentState.retarderLevel}</b>");
+            GUI.Label(new Rect(clusterX + 15, clusterY + 62, 550, 22), $"Passengers: <b>{CurrentState.passengerCount} / 44</b>   |   Satisfaction: <b>{CurrentState.satisfactionPercent:F0}%</b>   |   Doors: {(CurrentState.isDoorOpen ? "<color=yellow>OPEN</color>" : "<color=green>CLOSED</color>")}");
+            GUI.Label(new Rect(clusterX + 15, clusterY + 84, 550, 20), $"<color=#DDDDDD><size=11>Controls: [W/S] Throttle/Brake | [A/D] Steer | [Space] Handbrake | [E] Door | [C] Camera | [H] Horn | [L] Lights</size></color>");
+        }
     }
 }
