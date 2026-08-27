@@ -3,15 +3,6 @@ using Bussigo.Game.Core;
 
 namespace Bussigo.Game.Company
 {
-    public enum StaffRole
-    {
-        SeniorHighwayCaptain,
-        CityExpressDriver,
-        NightSleeperSpecialist,
-        MasterDieselMechanic,
-        TicketConductor,
-        DepotStationMaster
-    }
 
     public class StaffRosterProfileRecord24
     {

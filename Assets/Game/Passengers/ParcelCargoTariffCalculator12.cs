@@ -3,22 +3,11 @@ using Bussigo.Game.Core;
 
 namespace Bussigo.Game.Passengers
 {
-    public class CommercialCargoConsignment
-    {
-        public string ConsignmentTrackingCode { get; set; }
-        public string ConsignorName { get; set; }
-        public float WeightKg { get; set; }
-        public float VolumeM3 { get; set; }
-        public string OriginCity { get; set; }
-        public string DestinationCity { get; set; }
-        public float FreightChargesRupees { get; set; }
-    }
-
     public class ParcelCargoTariffCalculator12
     {
-        public float BaseFreightRatePerKgPer100Km { get; set; } = 5.30f;
-        public float MinimumFreightDocketChargeRupees { get; set; } = 150.0f;
-        public float ExpressParcelSurchargePercent { get; set; } = 25.0f;
+        public float BaseFreightRatePerKgPer100Km { get; set; } = 9.30f;
+        public float MinimumFreightDocketChargeRupees { get; set; } = 480.0f;
+        public float ExpressParcelSurchargePercent { get; set; } = 80.0f;
 
         public float CalculateFreightFare(float weightKg, float distanceKm, bool isExpressDelivery)
         {

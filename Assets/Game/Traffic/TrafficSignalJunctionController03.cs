@@ -4,15 +4,6 @@ using Bussigo.Game.Core;
 
 namespace Bussigo.Game.Traffic
 {
-    public enum SignalPhase
-    {
-        NorthSouthGreen,
-        NorthSouthAmber,
-        AllRedClearance,
-        EastWestGreen,
-        EastWestAmber,
-        PedestrianWalk
-    }
 
     public class TrafficSignalJunctionController03
     {
