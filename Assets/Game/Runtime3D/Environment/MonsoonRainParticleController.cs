@@ -14,8 +14,6 @@ namespace Bussigo.Game.Runtime3D.Environment
         public float roadFrictionCoefficient = 0.85f; // Normal dry asphalt
         public bool areWipersActive = false;
 
-        private float weatherChangeTimer = 0f;
-
         private void Update()
         {
             // Toggle Monsoon Rain with Key F8 (or dynamic timer)

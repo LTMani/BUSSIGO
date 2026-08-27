@@ -15,7 +15,7 @@ namespace Bussigo.Game.Runtime3D.Gameplay
         public double companyCashRupees = 500000.0;
         public int driverLevel = 1;
         public long driverXp = 0;
-        public FinancialLedger companyFinancialLedger;
+        [NonSerialized] public FinancialLedger companyFinancialLedger;
 
         private void Awake()
         {
