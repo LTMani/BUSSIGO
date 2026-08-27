@@ -10,8 +10,8 @@ namespace Bussigo.Game.SaveSystem
         public string MigratePayload(string oldPayloadJson)
         {
             if (string.IsNullOrEmpty(oldPayloadJson)) return "{}";
-            string fromVer = "version":"" + 26 + ".0.0";
-            string toVer = "version":"" + 27 + ".0.0";
+            string fromVer = "\"version\":\"" + 26 + ".0.0\"";
+            string toVer = "\"version\":\"" + 27 + ".0.0\"";
             return oldPayloadJson.Replace(fromVer, toVer);
         }
     }
