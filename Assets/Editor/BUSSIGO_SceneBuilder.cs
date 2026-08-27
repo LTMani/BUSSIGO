@@ -59,12 +59,12 @@ namespace Bussigo.Editor
             GameObject camGo = new GameObject("Main Camera");
             Camera cam = camGo.AddComponent<Camera>();
             cam.tag = "MainCamera";
-            cam.fieldOfView = 52f;
+            cam.fieldOfView = 54f;
             cam.nearClipPlane = 0.1f;
-            cam.farClipPlane = 2000f;
+            cam.farClipPlane = 3500f;
             camGo.AddComponent<AudioListener>();
-            camGo.transform.position = new Vector3(3.5f, 4.5f, -15.5f);
-            camGo.transform.rotation = Quaternion.Euler(10f, 0f, 0f);
+            camGo.transform.position = new Vector3(3.75f, 4.12f, -13.5f);
+            camGo.transform.rotation = Quaternion.Euler(10.5f, 0f, 0f);
 
             // 3. Master Bootstrap
             GameObject bootstrapGo = new GameObject("[BUSSIGO_MASTER_BOOTSTRAP]");
@@ -105,7 +105,7 @@ namespace Bussigo.Editor
             // 10. Hero Bus Root (IndianIntercityCoach_12M_Hero_LOD0)
             GameObject heroModelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(HERO_MODEL_PATH);
             GameObject heroBus = IndianCoachAssetFactory.CreateRiggedCoach(
-                new Vector3(3.5f, 0.52f, 0f),
+                new Vector3(3.75f, 0.52f, 0f),
                 Quaternion.identity,
                 heroModelPrefab
             );
