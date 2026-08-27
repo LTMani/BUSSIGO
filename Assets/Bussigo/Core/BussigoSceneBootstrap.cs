@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 using Bussigo.Vehicle;
 using Bussigo.Physics;
@@ -172,6 +173,9 @@ namespace Bussigo.Core
             // Ensure rig hierarchy transforms (camera mounts, wheels, steering wheel, glider door)
             EnsureRigHierarchyTransforms(heroBusInstance, rigHierarchy);
 
+            // Ensure 3D Visual Mesh is loaded and rendered on Hero Bus
+            EnsureHeroBusVisualMesh(heroBusInstance, rigHierarchy);
+
             // Connect vehicle component references
             wheelSync.chassisController = chassisController;
             wheelSync.rigHierarchy = rigHierarchy;
@@ -186,6 +190,16 @@ namespace Bussigo.Core
             if (mainCam != null)
             {
                 cameraRig.targetCamera = mainCam;
+                mainCam.cullingMask = ~0; // Render everything
+                mainCam.nearClipPlane = 0.1f;
+                mainCam.farClipPlane = 3000f;
+
+                // Immediately snap camera to chase mount
+                if (rigHierarchy.cameraMountChase != null)
+                {
+                    mainCam.transform.position = rigHierarchy.cameraMountChase.position;
+                    mainCam.transform.rotation = rigHierarchy.cameraMountChase.rotation;
+                }
             }
             cameraRig.rigHierarchy = rigHierarchy;
 
@@ -193,6 +207,73 @@ namespace Bussigo.Core
             {
                 passengerManager.playerBus = chassisController;
             }
+        }
+
+        private void EnsureHeroBusVisualMesh(GameObject busRoot, BusModelRigHierarchy rig)
+        {
+            Transform exterior = rig.exteriorRoot != null ? rig.exteriorRoot : busRoot.transform;
+            if (exterior.GetComponentInChildren<MeshRenderer>() == null)
+            {
+                // Try load production 12.5m Indian Luxury Coach OBJ mesh
+                string objPath = Path.Combine(Application.dataPath, "Bussigo/Assets/Models/Bus/IndianIntercityCoach_12M_Hero_LOD0.obj");
+                Mesh coachMesh = ObjMeshLoader.LoadObjFile(objPath);
+
+                if (coachMesh == null)
+                {
+                    string fallbackObj = Path.Combine(Application.dataPath, "Bussigo/Assets/Models/Bus/IndianIntercityCoach_12M.obj");
+                    coachMesh = ObjMeshLoader.LoadObjFile(fallbackObj);
+                }
+
+                GameObject bodyGo = new GameObject("CoachBody_MeshRenderer");
+                bodyGo.transform.SetParent(exterior, false);
+                bodyGo.transform.localPosition = Vector3.zero;
+                bodyGo.transform.localRotation = Quaternion.identity;
+
+                MeshFilter mf = bodyGo.AddComponent<MeshFilter>();
+                MeshRenderer mr = bodyGo.AddComponent<MeshRenderer>();
+
+                if (coachMesh != null)
+                {
+                    mf.sharedMesh = coachMesh;
+                }
+
+                // Create Master PBR Material
+                Material pbrMat = new Material(Shader.Find("Standard") ?? Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Diffuse"));
+                pbrMat.name = "IndianIntercityCoach_PBR_Mat";
+                pbrMat.color = new Color(0.82f, 0.12f, 0.16f); // Crimson AP Express Red
+
+                // Try load 2K PBR Albedo texture
+                string texPath = Path.Combine(Application.dataPath, "Bussigo/Assets/Textures/Coach_Livery_Albedo_2K.png");
+                if (File.Exists(texPath))
+                {
+                    byte[] texBytes = File.ReadAllBytes(texPath);
+                    Texture2D albedoTex = new Texture2D(2048, 2048, TextureFormat.RGBA32, true);
+                    if (albedoTex.LoadImage(texBytes))
+                    {
+                        pbrMat.mainTexture = albedoTex;
+                        pbrMat.color = Color.white;
+                    }
+                }
+
+                mr.sharedMaterial = pbrMat;
+
+                // Ensure Front Projector Headlights
+                CreateProjectorHeadlight(exterior, new Vector3(-0.95f, 0.85f, 6.25f));
+                CreateProjectorHeadlight(exterior, new Vector3(0.95f, 0.85f, 6.25f));
+            }
+        }
+
+        private void CreateProjectorHeadlight(Transform parent, Vector3 localPos)
+        {
+            GameObject lightGo = new GameObject("ProjectorHeadlight");
+            lightGo.transform.SetParent(parent, false);
+            lightGo.transform.localPosition = localPos;
+            Light spotLight = lightGo.AddComponent<Light>();
+            spotLight.type = LightType.Spot;
+            spotLight.range = 80f;
+            spotLight.spotAngle = 48f;
+            spotLight.intensity = 2.5f;
+            spotLight.color = new Color(1.0f, 0.96f, 0.88f);
         }
 
         private void EnsureRigHierarchyTransforms(GameObject busRoot, BusModelRigHierarchy rig)
