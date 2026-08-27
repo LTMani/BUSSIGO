@@ -72,9 +72,6 @@ namespace Bussigo.Editor
 
             // 4. Core Services
             GameObject coreGo = new GameObject("[CORE_SERVICES]");
-            var servLoc = coreGo.AddComponent<ServiceLocator>();
-            var evtBus = coreGo.AddComponent<EventBus>();
-            var gsm = coreGo.AddComponent<GameStateMachine>();
             var econMgr = coreGo.AddComponent<EconomyManager>();
             var compMgr = coreGo.AddComponent<CompanyManager>();
             var saveSys = coreGo.AddComponent<SaveSystem>();
@@ -87,7 +84,6 @@ namespace Bussigo.Editor
 
             // 6. Road Network
             GameObject roadGo = new GameObject("[ROAD_NETWORK]");
-            var hwyBuilder = roadGo.AddComponent<NH65HighwayNetworkBuilder>();
             var routeGraph = roadGo.AddComponent<RouteGraph>();
             var distSvc = roadGo.AddComponent<RouteDistanceService>();
             var roadStreamer = roadGo.AddComponent<RoadSegmentStreamer>();
@@ -135,21 +131,19 @@ namespace Bussigo.Editor
             tripHUD.economyManager = econMgr;
 
             // Connect Bootstrap references
-            bootstrap.serviceLocator = servLoc;
-            bootstrap.eventBus = evtBus;
-            bootstrap.gameStateMachine = gsm;
             bootstrap.economyManager = econMgr;
             bootstrap.companyManager = compMgr;
             bootstrap.saveSystem = saveSys;
             bootstrap.timeOfDayService = timeSvc;
             bootstrap.weatherManager = weatherMgr;
             bootstrap.roadsideManager = roadsideMgr;
-            bootstrap.highwayBuilder = hwyBuilder;
             bootstrap.routeGraph = routeGraph;
             bootstrap.distanceService = distSvc;
             bootstrap.roadStreamer = roadStreamer;
             bootstrap.trafficManager = trafficMgr;
+            bootstrap.trafficSpawner = trafficSpawn;
             bootstrap.passengerManager = paxMgr;
+            bootstrap.boardingManager = boardMgr;
             bootstrap.audioMixer = audioMixer;
             bootstrap.engineAudio = engineAudio;
             bootstrap.airSounds = airSounds;

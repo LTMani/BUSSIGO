@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Bussigo.Economy
 {
     [Serializable]
-    public struct LedgerEntry
+    public struct DoubleEntryRecord
     {
         public string timestamp;
         public string description;
@@ -17,12 +17,12 @@ namespace Bussigo.Economy
     public class DoubleEntryLedger : MonoBehaviour
     {
         public int currentBalanceINR = 500000;
-        public List<LedgerEntry> transactionHistory = new List<LedgerEntry>();
+        public List<DoubleEntryRecord> transactionHistory = new List<DoubleEntryRecord>();
 
         public void RecordTransaction(string description, int credit, int debit)
         {
             currentBalanceINR = currentBalanceINR + credit - debit;
-            transactionHistory.Add(new LedgerEntry
+            transactionHistory.Add(new DoubleEntryRecord
             {
                 timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
                 description = description,

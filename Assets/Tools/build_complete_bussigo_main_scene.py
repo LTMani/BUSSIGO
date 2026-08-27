@@ -6,18 +6,14 @@ Serializes the full, complete GameObject hierarchy and component wiring:
 2. Main Camera & AudioListener
 3. [BUSSIGO_MASTER_BOOTSTRAP] (BussigoSceneBootstrap)
 4. [CORE_SERVICES]
-   - ServiceLocator
-   - EventBus
-   - GameStateMachine
-   - SaveSystem
    - EconomyManager
    - CompanyManager
+   - SaveSystem
 5. [WORLD_ENVIRONMENT]
    - TimeOfDayService
    - DynamicWeatherManager
    - RoadsideInfrastructureManager
 6. [ROAD_NETWORK]
-   - NH65HighwayNetworkBuilder
    - RouteGraph
    - RouteDistanceService
    - RoadSegmentStreamer
@@ -72,9 +68,6 @@ def generate_full_scene():
 
     # Script GUIDs
     GUID_BOOTSTRAP = "b57b8993de2c0d144a147a234899e3d1"
-    GUID_SERVICE_LOCATOR = "120373e5973bf9240a7407e18487b1e3"
-    GUID_EVENT_BUS = "bb1a1a4f7eca2094aa5e1760058eaf37"
-    GUID_STATE_MACHINE = "651c7c7a33ddcf6498d0197deab19927"
     GUID_ECONOMY_MGR = "da97fc460ac729544ac63105c7e8bd86"
     GUID_COMPANY_MGR = "ebbbc0d320003844ea9ff4e7fd6047ee"
     GUID_SAVE_SYSTEM = "436b9e37f6f7b6c49b54897814097510"
@@ -87,7 +80,6 @@ def generate_full_scene():
     GUID_DOOR_ACTUATOR = "ac1ab745f67979742b97ceb7e069bed6"
     GUID_CAMERA_RIG = "ffc3aeeff4a7a2d4792ef8705a95af02"
     
-    GUID_HIGHWAY_BUILDER = "edc0d678aab06bd418c4b98d5dfe57b6"
     GUID_ROUTE_GRAPH = "056ce71af7855e3478040da3089143c9"
     GUID_DISTANCE_SERVICE = "b020ce2e0c8a80d479ad673ca6ec7b51"
     GUID_ROAD_STREAMER = "b5a6f6e707f6fdb4dbdf17a8e18abd0d"
@@ -372,8 +364,6 @@ GameObject:
   - component: {{fileID: 2002}}
   - component: {{fileID: 2003}}
   - component: {{fileID: 2004}}
-  - component: {{fileID: 2005}}
-  - component: {{fileID: 2006}}
   m_Layer: 0
   m_Name: [CORE_SERVICES]
   m_TagString: Untagged
@@ -402,7 +392,7 @@ MonoBehaviour:
   m_PrefabAsset: {{fileID: 0}}
   m_GameObject: {{fileID: 2000}}
   m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_SERVICE_LOCATOR}, type: 3}}
+  m_Script: {{fileID: 11500000, guid: {GUID_ECONOMY_MGR}, type: 3}}
 --- !u!114 &2003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,7 +401,7 @@ MonoBehaviour:
   m_PrefabAsset: {{fileID: 0}}
   m_GameObject: {{fileID: 2000}}
   m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_EVENT_BUS}, type: 3}}
+  m_Script: {{fileID: 11500000, guid: {GUID_COMPANY_MGR}, type: 3}}
 --- !u!114 &2004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -420,25 +410,7 @@ MonoBehaviour:
   m_PrefabAsset: {{fileID: 0}}
   m_GameObject: {{fileID: 2000}}
   m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_STATE_MACHINE}, type: 3}}
---- !u!114 &2005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {{fileID: 0}}
-  m_PrefabInstance: {{fileID: 0}}
-  m_PrefabAsset: {{fileID: 0}}
-  m_GameObject: {{fileID: 2000}}
-  m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_ECONOMY_MGR}, type: 3}}
---- !u!114 &2006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {{fileID: 0}}
-  m_PrefabInstance: {{fileID: 0}}
-  m_PrefabAsset: {{fileID: 0}}
-  m_GameObject: {{fileID: 2000}}
-  m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_COMPANY_MGR}, type: 3}}
+  m_Script: {{fileID: 11500000, guid: {GUID_SAVE_SYSTEM}, type: 3}}
 
 --- !u!1 &3000
 GameObject:
@@ -512,7 +484,6 @@ GameObject:
   - component: {{fileID: 4002}}
   - component: {{fileID: 4003}}
   - component: {{fileID: 4004}}
-  - component: {{fileID: 4005}}
   m_Layer: 0
   m_Name: [ROAD_NETWORK]
   m_TagString: Untagged
@@ -541,7 +512,7 @@ MonoBehaviour:
   m_PrefabAsset: {{fileID: 0}}
   m_GameObject: {{fileID: 4000}}
   m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_HIGHWAY_BUILDER}, type: 3}}
+  m_Script: {{fileID: 11500000, guid: {GUID_ROUTE_GRAPH}, type: 3}}
 --- !u!114 &4003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -550,17 +521,8 @@ MonoBehaviour:
   m_PrefabAsset: {{fileID: 0}}
   m_GameObject: {{fileID: 4000}}
   m_Enabled: 1
-  m_Script: {{fileID: 11500000, guid: {GUID_ROUTE_GRAPH}, type: 3}}
---- !u!114 &4004
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {{fileID: 0}}
-  m_PrefabInstance: {{fileID: 0}}
-  m_PrefabAsset: {{fileID: 0}}
-  m_GameObject: {{fileID: 4000}}
-  m_Enabled: 1
   m_Script: {{fileID: 11500000, guid: {GUID_DISTANCE_SERVICE}, type: 3}}
---- !u!114 &4005
+--- !u!114 &4004
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {{fileID: 0}}
