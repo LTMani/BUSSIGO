@@ -31,6 +31,32 @@ namespace Bussigo.Company
 
             ServiceLocator.Register<CompanyManager>(this);
 
+            InitializeDefaultState();
+        }
+
+        /// <summary>
+        /// Resets the company to its default state (as if starting a new game).
+        /// Does not affect ServiceLocator registration or the isInitialized flag.
+        /// </summary>
+        public void ResetToDefault()
+        {
+            // Reset identity fields to default values
+            companyName = "BUSSIGO Royal Travels";
+            companyLevel = 1;
+            currentExperienceXP = 0;
+            companyReputationPercent = 88.0f;
+
+            // Clear all lists
+            ownedFleet.Clear();
+            hiredDrivers.Clear();
+            unlockedRouteIDs.Clear();
+
+            // Recreate default state
+            InitializeDefaultState();
+        }
+
+        private void InitializeDefaultState()
+        {
             // 1. Initialize Default Flagship Hero Bus (12.5m Indian Intercity Coach)
             if (ownedFleet.Count == 0)
             {

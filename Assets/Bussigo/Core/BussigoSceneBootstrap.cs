@@ -95,17 +95,60 @@ namespace Bussigo.Core
 
         private void EnsureCoreServices()
         {
-            if (economyManager == null) economyManager = FindOrCreate<EconomyManager>("[CORE_SERVICES]");
-            if (companyManager == null) companyManager = FindOrCreate<CompanyManager>("[CORE_SERVICES]");
-            if (saveSystem == null) saveSystem = FindOrCreate<SaveSystem>("[CORE_SERVICES]");
+            // Use ServiceLocator.TryGet first to prevent duplicates when returning from gameplay
+            if (!ServiceLocator.TryGet<EconomyManager>(out economyManager))
+            {
+                // Not found, create and register new instance
+                economyManager = FindOrCreate<EconomyManager>("[CORE_SERVICES]");
+                economyManager.Initialize();
+                ServiceLocator.Register<EconomyManager>(economyManager);
+                // Mark as persistent
+                DontDestroyOnLoad(economyManager.gameObject);
+            }
+            else
+            {
+                // Already exists, just ensure it's initialized
+                if (!economyManager.isInitialized)
+                {
+                    economyManager.Initialize();
+                }
+            }
 
-            economyManager.Initialize();
-            companyManager.Initialize();
-            saveSystem.Initialize();
+            if (!ServiceLocator.TryGet<CompanyManager>(out companyManager))
+            {
+                // Not found, create and register new instance
+                companyManager = FindOrCreate<CompanyManager>("[CORE_SERVICES]");
+                companyManager.Initialize();
+                ServiceLocator.Register<CompanyManager>(companyManager);
+                // Mark as persistent
+                DontDestroyOnLoad(companyManager.gameObject);
+            }
+            else
+            {
+                // Already exists, just ensure it's initialized
+                if (!companyManager.isInitialized)
+                {
+                    companyManager.Initialize();
+                }
+            }
 
-            ServiceLocator.Register<EconomyManager>(economyManager);
-            ServiceLocator.Register<CompanyManager>(companyManager);
-            ServiceLocator.Register<SaveSystem>(saveSystem);
+            if (!ServiceLocator.TryGet<SaveSystem>(out saveSystem))
+            {
+                // Not found, create and register new instance
+                saveSystem = FindOrCreate<SaveSystem>("[CORE_SERVICES]");
+                saveSystem.Initialize();
+                ServiceLocator.Register<SaveSystem>(saveSystem);
+                // Mark as persistent
+                DontDestroyOnLoad(saveSystem.gameObject);
+            }
+            else
+            {
+                // Already exists, just ensure it's initialized
+                if (!saveSystem.isInitialized)
+                {
+                    saveSystem.Initialize();
+                }
+            }
         }
 
         private void EnsureRouteNetwork()

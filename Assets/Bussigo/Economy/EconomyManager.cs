@@ -33,6 +33,16 @@ namespace Bussigo.Economy
             Debug.Log("[BUSSIGO] EconomyManager initialized with Double-Entry Ledger.");
         }
 
+        /// <summary>
+        /// Resets the economy to its default state (as if starting a new game).
+        /// Does not affect ServiceLocator registration or the isInitialized flag.
+        /// </summary>
+        public void ResetToDefault()
+        {
+            // Reset ledger to a fresh state
+            ledger = new CompanyLedger();
+        }
+
         public void Shutdown()
         {
             // Clean shutdown
